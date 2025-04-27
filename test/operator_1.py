@@ -37,6 +37,7 @@ def operator_test(select, energy):
 
     # print the size of the quadrature
     print("quadrature length: ", len(quad))
+    print()
 
     # produce the symbolic pieces
     kern = kernel(energy)
@@ -56,8 +57,8 @@ def main():
 
     # choose the three functions
     k = 1
-    l = 1
-    m = 1
+    l = 2
+    m = 0
 
     k1 = 1
     l1 = 1
@@ -65,7 +66,7 @@ def main():
 
     k2 = 0
     l2 = 1
-    m2 = 0
+    m2 = 1
 
     select = [[k,l,m],[k1,l1,m1],[k2,l2,m2]]
 
@@ -74,7 +75,7 @@ def main():
     '''
     # energy = (1/2)*r**2       # non-relativistic
     energy = sp.sqrt(1+r**2)  # relativistic
-    # energy   = r**3
+    # energy   = r**3             # polynomial
 
     # test the operator
     operator_test(select, energy)

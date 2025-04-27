@@ -29,10 +29,7 @@ def integrand(k_sym, f_sym, g_sym, test_sym, points):
     # print
     a = f(rp, tp, pp)*g(rq, tq, pq)
     b = (k(rp, tp, pp, rq, tq, pq)@(grad_test(rp, tp, pp) - grad_test(rq, tq, pq)))
-
-    # print(a)
-    # print(b)
-
+    
     # inner product
     i = np.dot(a.flatten(),b.flatten())
 

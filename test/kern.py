@@ -19,7 +19,6 @@ def energy_grad(energy):
 # kernel (projector)
 def kernel(energy):
     # symbols
-    # vx, vy, vz, wx, wy, wz = sp.symbols('vx vy vz wx wy wz')
     r, t, p     = sp.symbols('r t p')
     rp, tp, pp  = sp.symbols('rp tp pp')
     rq, tq, pq  = sp.symbols('rq tq pq')
@@ -35,8 +34,35 @@ def kernel(energy):
     ep = e.subs(p_sub)
     eq = e.subs(q_sub)
 
+    # Alternative way
+    u = ep - eq
+    altern =  u.dot(u)*sp.eye(3) - u*u.T
+    altern = sp.simplify(altern)
+
+    # Relativistic part
+    z = (ep+eq)/2
+    cross = z.cross(u)
+    altern = altern - cross*cross.T
+    altern = sp.simplify(altern)
     
+    # check conservation
+    print("energy: ")
+    print(energy)
+    print()
+    print("kernel: ")
+    print(altern)
+    print()
+    print("u - relative velocity: ")
+    print(u)
+    print()
+    print("check conservation (S*u) should be zero 0")
+    print()
+    print(sp.simplify(altern * u))
+    print()
+
+    return altern
     ''' 
+    # vx, vy, vz, wx, wy, wz = sp.symbols('vx vy vz wx wy wz')
     print()
     print(ep)
     print(eq)
@@ -82,20 +108,6 @@ def kernel(energy):
     print("Kernel:")
     print(ker)
     '''
-
-    # Alternative way
-    u = ep - eq
-    altern =  u.dot(u)*sp.eye(3) - u*u.T
-    altern = sp.simplify(altern)
-
-    # Relativistic part
-    z = (ep+eq)/2
-    cross = z.cross(u)
-    altern = altern - cross*cross.T
-    altern = sp.simplify(altern)
-    
-    return altern
-
 # cartesian energy grad
 def energy_grad_cart():
     # Symbols
