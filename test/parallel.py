@@ -98,8 +98,9 @@ if __name__ == "__main__":
     # radial symbol
     r = sp.symbols('r')
     # energy = (1/2)*r**2       # non-relativistic
-    energy = sp.sqrt(1+r**2)  # relativistic
+    # energy = sp.sqrt(1+r**2)  # relativistic
     # energy   = r**3             # polynomial
+    energy = 1 + 0.43991322*r**2 - 0.0338162*r**4
 
     # compute the tensor
     weight_iteration(n, results, file_result)

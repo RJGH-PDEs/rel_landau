@@ -146,7 +146,7 @@ def sparse_op(do):
 
 # main funtion
 def main():
-    n = 3
+    n = 2
     L = n - 1 # max value l can take?
     tol = 0.03 # tolerance for the nonzeros
 
