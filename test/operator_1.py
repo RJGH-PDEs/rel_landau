@@ -31,6 +31,23 @@ def operator(k_sym, f_sym, g_sym, test_sym, quadrature):
     return sum
 
 # test the operator
+def operator_parallel(select, shared_data):
+    # unpack shared data
+    quad = shared_data[0]
+    kern = shared_data[1]
+
+    # produce the symbolic pieces
+    f, g, test = sym_pieces(select)
+
+    # compute the landau operator
+    result = operator(kern, f, g, test, quad)
+
+    # print results
+    print("select: ", select, "result: ", result)
+
+    return [select, result]
+
+# test the operator
 def operator_test(select, energy):
    # load the quadrature
     quad = load_quad()
