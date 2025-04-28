@@ -37,13 +37,13 @@ def kernel(energy):
     # Alternative way
     u = ep - eq
     altern =  u.dot(u)*sp.eye(3) - u*u.T
-    altern = sp.simplify(altern)
+    # altern = sp.simplify(altern)
 
     # Relativistic part
     z = (ep+eq)/2
     cross = z.cross(u)
     altern = altern - cross*cross.T
-    altern = sp.simplify(altern)
+    # altern = sp.simplify(altern)
     
     # check conservation
     print("energy: ")
@@ -55,10 +55,10 @@ def kernel(energy):
     print("u - relative velocity: ")
     print(u)
     print()
-    print("check conservation (S*u) should be zero 0")
-    print()
-    print(sp.simplify(altern * u))
-    print()
+    # print("check conservation (S*u) should be zero 0")
+    # print()
+    # print(sp.simplify(altern * u))
+    # print()
 
     return altern
     ''' 
