@@ -13,8 +13,8 @@ def gaussWeight(x):
 	return np.exp(-x*x)
 
 # Interpolate using Chebyshev polynomials
-L = 8
-deg = 8
+L = 7
+deg = 10
 cheb_poly = Chebyshev.interpolate(func, deg, [-L,L])
 
 # Convert to standard polynomial form

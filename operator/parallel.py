@@ -83,7 +83,7 @@ if __name__ == "__main__":
     n = 2
 
     # where to save result:
-    file_name = 'results/e=analytical.pkl'
+    file_name = 'results/e=deg10.pkl'
     
     # results to be stored here
     results = []
@@ -94,15 +94,15 @@ if __name__ == "__main__":
     # radial symbol
     r = sp.symbols('r')
     # energy = (1/2)*r**2       # non-relativistic
-    energy = sp.sqrt(1+r**2)  # relativistic
+    # energy = sp.sqrt(1+r**2)  # relativistic
     # energy   = r**3             # polynomial
     # energy = 1 + 0.43991322*r**2 - 0.0338162*r**4
     # energy = 1.0 + 0.37438846*r**2 + 0.01891801*r**4 + 0.00058631*r**6 - (6.71019908e-06)*r**8
     # energy = 1.0 + 0.35854196*r**2 - 0.01482466*r**4  + 0.00028524*r**6
 
     # load the projection
-    # with open('../cheby/eh.pkl', 'rb') as f:
-    #    energy = pickle.load(f)
+    with open('../cheby/eh.pkl', 'rb') as f:
+       energy = pickle.load(f)
 
 
     # compute the tensor
