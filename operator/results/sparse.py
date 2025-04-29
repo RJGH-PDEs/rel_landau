@@ -150,9 +150,9 @@ def main():
     L = n - 1 # max value l can take?
     tol = 0.03 # tolerance for the nonzeros
 
-    file_name = "analytic_energy.pkl"
+    file_name = "results.pkl"
     
-    op = load_operator(file_name)[0]   # operator pkl
+    op = load_operator(file_name)   # operator pkl
     nz = non_zeros(op, tol)         # non zeros
     analyse(nz)
     # finish here
