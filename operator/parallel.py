@@ -83,7 +83,7 @@ if __name__ == "__main__":
     n = 2
 
     # where to save result:
-    file_name = 'results/results_energy=.pkl'
+    file_name = 'results/e=deg8.pkl'
     
     # results to be stored here
     results = []

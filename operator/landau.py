@@ -6,7 +6,7 @@ from unpack import unpack_quadrature
 from integrand import integrand
 # symbolic parts
 from kern import kernel
-from integrand import sym_pieces
+from integrand import pieces
 
 # loads the quadrature
 def load_quad():
@@ -15,7 +15,7 @@ def load_quad():
     return data
 
 # The Landau Operator
-def operator(k_sym, f_sym, g_sym, test_sym, quadrature):
+def operator(k, f, g, test, quadrature):
     # numerical integration
     sum = 0
     for q in quadrature:
@@ -23,7 +23,8 @@ def operator(k_sym, f_sym, g_sym, test_sym, quadrature):
         weight, points = unpack_quadrature(q)
         
         # sample the function
-        sample = integrand(k_sym, f_sym, g_sym, test_sym, points)
+        # sample = integrand(k_sym, f_sym, g_sym, test_sym, points)
+        sample = integrand(k, f, g, test, points)
         # update sum
         sum = sum + weight*sample
         # print(sum)
@@ -34,13 +35,13 @@ def operator(k_sym, f_sym, g_sym, test_sym, quadrature):
 def operator_parallel(select, shared_data):
     # unpack shared data
     quad = shared_data[0]
-    kern = shared_data[1]
+    sym_kern = shared_data[1]
 
     # produce the symbolic pieces
-    f, g, test = sym_pieces(select)
+    k, f, g, test = pieces(select, sym_kern)
 
     # compute the landau operator
-    result = operator(kern, f, g, test, quad)
+    result = operator(k, f, g, test, quad)
 
     # print results
     print("select: ", select, "result: ", result)
@@ -58,7 +59,7 @@ def operator_test(select, energy):
 
     # produce the symbolic pieces
     kern = kernel(energy)
-    f, g, test = sym_pieces(select)
+    f, g, test = pieces(select)
 
     # compute the landau operator
     result = operator(kern, f, g, test, quad)

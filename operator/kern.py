@@ -121,7 +121,7 @@ def energy_grad_cart():
     print(r)
     
     # energy 
-    e = sp.sqrt(0+r**2)
+    e = sp.sqrt(1+r**2)
 
     # energy gradient
     eg = sp.Matrix([sp.diff(e, x), sp.diff(e, y), sp.diff(e,z)])
