@@ -95,7 +95,7 @@ collision operator
 '''
 choose the integration order here
 '''
-n_laguerre = 3
+n_laguerre = 8
 n_lebedev = 5
 
 # extract the coefficients
