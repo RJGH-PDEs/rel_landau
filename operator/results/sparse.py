@@ -150,7 +150,7 @@ def main():
     L = n - 1 # max value l can take?
     tol = 0.03 # tolerance for the nonzeros
 
-    file_name = 'e=deg8.pkl'
+    file_name = 'e=analytical.pkl'
     # file_name = 'analytic_energy.pkl'
     
     print(file_name)
