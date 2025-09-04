@@ -57,6 +57,7 @@ def pieces(select, k_sym):
 
 
     return k, f, g, test
+
 # testing the integrand
 def test_integrand():
     # choose the three functions

@@ -1,7 +1,4 @@
 import sympy as sp
-import numpy as np
-from sympy.physics.quantum import TensorProduct
-import math
 
 # computes the basis - without the weight
 def basis(k, l, m):
@@ -10,8 +7,6 @@ def basis(k, l, m):
     t = sp.symbols('t')
     p = sp.symbols('p')
 
-    # alpha
-    a = l + 1/2
 
     # Spherical harmonic
     sphr = sp.simplify(sp.assoc_legendre(l,abs(m), sp.cos(t)))
@@ -24,8 +19,13 @@ def basis(k, l, m):
 
     # Radial part
     radial = 1
+    
     if k > 0:
+        # alpha
+        a = l + 1/2
+ 
         radial = sp.assoc_laguerre(k, a, r**2)
+
     radial = radial*r**l
 
     # the test function
@@ -69,12 +69,40 @@ def grad_weighted(f):
     r = sp.symbols('r')
 
     # add the exponential
-    g = sp.exp(-r**2)*f
+    # g = sp.exp(-r**2)*f
+    g = sp.exp((-r**2)/2)*f
 
     # take the gradient
     grad = gradient(g)
 
     # take away the Gaussian weight
-    grad = sp.simplify(grad/sp.exp(-r**2)) # should not have any gradient
-
+    # grad = sp.simplify(grad/sp.exp((-r**2)) # should not have any gradient
+    grad = sp.simplify(grad/sp.exp((-r**2)/2)) 
+    
     return grad
+
+# A test
+def test():
+    # parameters
+    k = 1
+    l = 0
+    m = 0
+
+    # basis function
+    f = basis(k, l, m)
+
+    # print the basis
+    print("basis: ", f)
+
+    # print the gradient
+    print("gradient: ", gradient(f))
+
+    # print weighted gradient
+    print("weighet gradient: ", grad_weighted(f))
+
+# The main function
+def main():
+    test()
+
+if __name__ == "__main__":
+    main()

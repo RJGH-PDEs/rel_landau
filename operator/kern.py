@@ -1,5 +1,4 @@
 import sympy as sp
-import numpy as np
 
 # energy gradient
 def energy_grad(energy):
@@ -17,97 +16,62 @@ def energy_grad(energy):
     return eg
 
 # kernel (projector)
-def kernel(energy):
+def kernel(energy, verbose=False, rel=False):
     # symbols
     r, t, p     = sp.symbols('r t p')
     rp, tp, pp  = sp.symbols('rp tp pp')
     rq, tq, pq  = sp.symbols('rq tq pq')
 
     # obtain the energy
-    e = energy_grad(energy)
+    eg = energy_grad(energy)
+    
+    if verbose:
+        print("energy grad: ", eg)
+        print()
 
     # substitutions
     p_sub = {r: rp, t: tp, p: pp}
     q_sub = {r: rq, t: tq, p: pq} 
 
-    # energies
-    ep = e.subs(p_sub)
-    eq = e.subs(q_sub)
+    # energy gradients, evaluated at p and q
+    ep = eg.subs(p_sub)
+    eq = eg.subs(q_sub)
 
     # Alternative way
     u = ep - eq
+    
+    if verbose:
+        print("u: ", u)
+
     altern =  u.dot(u)*sp.eye(3) - u*u.T
     # altern = sp.simplify(altern)
-
-    # Relativistic part
-    z = (ep+eq)/2
-    cross = z.cross(u)
-    altern = altern - cross*cross.T
-    # altern = sp.simplify(altern)
     
-    # check conservation
-    print("energy: ")
-    print(energy)
-    print()
-    print("kernel: ")
-    print(altern)
-    print()
-    print("u - relative velocity: ")
-    print(u)
-    print()
-    # print("check conservation (S*u) should be zero 0")
-    # print()
-    # print(sp.simplify(altern * u))
-    # print()
+    if rel:
+        # Relativistic part
+        z = (ep+eq)/2
+        cross = z.cross(u)
+        altern = altern - cross*cross.T
+        # altern = sp.simplify(altern)
+    
+    if verbose:
+        # check conservation
+        print()
+        print("energy: ")
+        print(energy)
+        print()
+        print("kernel: ")
+        print(altern)
+        print()
+        print("u - relative velocity: ")
+        print(u)
+        print()
+        print("check conservation (S*u) should be zero 0")
+        print()
+        print(sp.simplify(altern * u))
+        print()
 
     return altern
-    ''' 
-    # vx, vy, vz, wx, wy, wz = sp.symbols('vx vy vz wx wy wz')
-    print()
-    print(ep)
-    print(eq)
 
-    # vectors
-    v = sp.Matrix([vx, vy, vz])
-    w = sp.Matrix([wx, wy, wz])
-
-    # relative and mean velocity
-    u = v - w
-
-    # the tensor field
-    S = u.dot(u)*sp.eye(3) - u*u.T
-    S = sp.simplify(S)
-     # relativistic part
-    z = (v + w)/2
-    cross = z.cross(u)
-    S = S - cross*cross.T
-    S = sp.simplify(S)
-    print(S)
-    
-    # obtain the energy
-    e = energy_grad()
-
-    # substitutions
-    p_sub = {r: rp, t: tp, p: pp}
-    q_sub = {r: rq, t: tq, p: pq} 
-
-    # energies
-    ep = e.subs(p_sub)
-    eq = e.subs(q_sub)
-
-    
-    print()
-    print(ep)
-    print(eq)
-    
-
-    # substitute
-    sub = {v[0]: ep[0], v[1]: ep[1], v[2]: ep[2], w[0]: eq[0], w[1]: eq[1], w[2]: eq[2]}
-    ker = sp.simplify(S.subs(sub))
-    
-    print("Kernel:")
-    print(ker)
-    '''
 # cartesian energy grad
 def energy_grad_cart():
     # Symbols
@@ -128,3 +92,24 @@ def energy_grad_cart():
     eg = sp.simplify(eg)
 
     return eg
+
+# A test
+def test():
+    # energy 
+    r = sp.symbols('r')
+    # e = sp.sqrt(1+r**2)
+    e = (r**2)/2
+
+    # compute the kernel
+    rel     = False
+    verbose = True
+    kern = kernel(e, verbose, rel) 
+
+    return 0
+
+# The main function
+def main():
+    test()
+
+if __name__ == "__main__":
+    main()
