@@ -20,7 +20,8 @@ def theta(x, y, z):
     if r == 0:
         return 0
     else:
-        return np.arccos(z/ r)
+        return np.arccos(z/r)
+
 # phi    
 def phi(x, y):
     r = np.sqrt(x**2 + y**2)
@@ -31,7 +32,6 @@ def phi(x, y):
         return np.arccos(x/r) # new discovery, this might be wrong
     else:
         return np.sign(y)*np.arccos(x/r)
-
 
 '''
 Unpack the quadrature
@@ -95,8 +95,8 @@ collision operator
 '''
 choose the integration order here
 '''
-n_laguerre = 8
-n_lebedev = 5
+n_laguerre  = 8
+n_lebedev   = 5
 
 # extract the coefficients
 alpha = 1/2

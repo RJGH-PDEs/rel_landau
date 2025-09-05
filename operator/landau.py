@@ -1,5 +1,6 @@
 import sympy as sp
 import pickle
+from numba import njit
 # import quadrature unpacker
 from unpack import unpack_quadrature
 # import integrand
@@ -17,7 +18,7 @@ def load_quad():
 # The Landau Operator
 def operator(k, f, g, test, quadrature):
     # numerical integration
-    sum = 0
+    integral = 0
     for q in quadrature:
         # unpack quadrature 
         weight, points = unpack_quadrature(q)
@@ -26,16 +27,16 @@ def operator(k, f, g, test, quadrature):
         # sample = integrand(k_sym, f_sym, g_sym, test_sym, points)
         sample = integrand(k, f, g, test, points)
         # update sum
-        sum = sum + weight*sample
+        integral = integral + weight*sample
         # print(sum)
 
-    return sum
+    return integral
 
 # test the operator
 def operator_parallel(select, shared_data):
     # unpack shared data
-    quad = shared_data[0]
-    sym_kern = shared_data[1]
+    quad        = shared_data[0]
+    sym_kern    = shared_data[1]
 
     # produce the symbolic pieces
     k, f, g, test = pieces(select, sym_kern)
@@ -50,7 +51,7 @@ def operator_parallel(select, shared_data):
 
 # test the operator
 def operator_test(select, energy):
-   # load the quadrature
+    # load the quadrature
     quad = load_quad()
 
     # print the size of the quadrature
@@ -58,30 +59,32 @@ def operator_test(select, energy):
     print()
 
     # produce the symbolic pieces
-    kern = kernel(energy)
-    f, g, test = pieces(select)
+    sym_kern        = kernel(energy)
+    k, f, g, test   = pieces(select, sym_kern)
 
     # compute the landau operator
-    result = operator(kern, f, g, test, quad)
+    result = operator(k, f, g, test, quad)
 
     # print results
     print("select: ", select)
     print("result: ", result ) 
 
 # The main function
-def main():
+def test():
     # radial symbol
     r = sp.symbols('r')
 
-    # choose the three functions
+    # test function
     k = 1
-    l = 2
+    l = 0
     m = 0
-
+    
+    # f
     k1 = 1
     l1 = 1
     m1 = 1
-
+    
+    # g
     k2 = 0
     l2 = 1
     m2 = 1
@@ -91,15 +94,17 @@ def main():
     '''
     Choose the energy
     '''
-    # energy = (1/2)*r**2       # non-relativistic
-    energy = sp.sqrt(1+r**2)  # relativistic
+    energy = (1/2)*r**2       # non-relativistic
+    # energy = sp.sqrt(1+r**2)  # relativistic
     # energy   = r**3             # polynomial
 
     # test the operator
     operator_test(select, energy)
 
-    
-   
-# Call the main function
+
+# main function
+def main():
+    test()
+
 if __name__ == "__main__":
     main()

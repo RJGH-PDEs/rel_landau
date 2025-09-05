@@ -7,12 +7,25 @@ from basis import basis, grad_weighted, gradient
 
 # the integrand
 def integrand(k, f, g, gt, points):
-    i = 0
+    '''
+    Input:
+        - k:    the kernel
+        - f:    basis function 
+        - g:    gradient of basis function  -- Gaussian weight 
+        - gt:   gradient of test function   -- no weight
+        - pts:  p, q in spherical coordinates
+
+    Output: 
+        - the integrand, evaluated at p, q
+    '''
+    result = 0
 
     # the evaluation points
+    # p
     rp = points[0]
     tp = points[1]
     pp = points[2]
+    # q
     rq = points[3]
     tq = points[4]
     pq = points[5]
@@ -22,26 +35,28 @@ def integrand(k, f, g, gt, points):
     b = (k(rp, tp, pp, rq, tq, pq)@(gt(rp, tp, pp) - gt(rq, tq, pq)))
     
     # inner product
-    i = np.dot(a.flatten(),b.flatten())
+    result = np.dot(a.flatten(),b.flatten())
 
-    return i
+    return result
 
 # produces the pieces given a selection of the indices
 def pieces(select, k_sym):
-    # choose the three functions
+    # test function
     k = select[0][0]
     l = select[0][1]
     m = select[0][2]
-
+    
+    # f
     k1 = select[1][0]
     l1 = select[1][1]
     m1 = select[1][2]
-
+    
+    # g
     k2 = select[2][0]
     l2 = select[2][1]
     m2 = select[2][2]
 
-    # produce them
+    # produce symbolic pieces
     f_sym       = basis(k1, l1, m1)
     g_sym       = grad_weighted(basis(k2, l2, m2))
     test_sym    = gradient(basis(k, l, m))
@@ -50,29 +65,34 @@ def pieces(select, k_sym):
     rp, tp, pp, rq, tq, pq = sp.symbols('rp tp pp rq tq pq')
     r, t, p = sp.symbols('r t p')
 
-    k       = sp.lambdify((rp, tp, pp, rq, tq, pq), k_sym, modules='numpy')
-    f       = sp.lambdify((r, t, p), f_sym, modules = 'numpy')
-    g       = sp.lambdify((r, t, p), g_sym, modules = 'numpy')
-    test    = sp.lambdify((r, t, p), test_sym, modules = 'numpy')
-
-
+    # numpy pieces
+    k       = sp.lambdify((rp, tp, pp, rq, tq, pq), k_sym, modules='numpy') # kernel
+    f       = sp.lambdify((r, t, p), f_sym, modules = 'numpy')              # trial function
+    g       = sp.lambdify((r, t, p), g_sym, modules = 'numpy')              # gradient trial function
+    test    = sp.lambdify((r, t, p), test_sym, modules = 'numpy')           # test function
+    
+    # return the pieces
     return k, f, g, test
 
 # testing the integrand
-def test_integrand():
+def test():
     # choose the three functions
+    # test function
     k = 1
     l = 0
     m = 0
-
+    
+    # trial function, no gradient
     k1 = 1
     l1 = 0
     m1 = 0
-
+    
+    # trial function, gradient
     k2 = 1
     l2 = 0
     m2 = 0
 
+    # package 
     select = [[k,l,m],[k1,l1,m1],[k2,l2,m2]]
 
     # define the points
@@ -89,15 +109,23 @@ def test_integrand():
     # produce the sympy parts
     # radial symbol
     r = sp.symbols('r')
-    energy = sp.sqrt(1+r**2)  # relativistic
+    # energy = sp.sqrt(1+r**2)  # relativistic
+    energy = (r**2)/2 # non-relativistic
 
-    kern = kernel(energy)
+    # Kernel 
+    rel  = False
+    verb = False
+    kern = kernel(energy, verb, rel)
+
+    # construct the pieces
     k, f, g, test = pieces(select, kern)
 
     # call the integrand
     print(integrand(k, f, g, test, points))
 
-    
+# The main function
+def main():
+    test()
 
-
-
+if __name__ == "__main__":
+    main()   
