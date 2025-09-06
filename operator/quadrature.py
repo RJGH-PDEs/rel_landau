@@ -83,121 +83,127 @@ contains all the points and weights to perform
 the 6 dimensional integration for the Landau 
 collision operator
 '''
-
-# open the special quadrature
-# with open('../special_quad/special_quad.pkl', 'rb') as file:
-#     special_quadrature = pickle.load(file)
-
-# print it
-# print("Special quadrature: ")
-# print(special_quadrature)
-
-'''
-choose the integration order here
-'''
-n_laguerre  = 8
-n_lebedev   = 5
-
-# extract the coefficients
-alpha = 1/2
-x,w_r = roots_genlaguerre(n_laguerre, alpha, False)
-lag = []
-for point, weight in zip(x, w_r):
+def quadrature():
     '''
-    we change variables 
+    choose the integration order here
     '''
-    new_point  = np.sqrt(point)
-    new_weight = weight/2
-    # append
-    lag.append([new_point, new_weight])
+    n_laguerre  = 8
+    n_lebedev   = 5
 
-# print("Radial integration: ")
-# print(lag)
+    # extract the coefficients
+    alpha = 1/2
+    x,w_r = roots_genlaguerre(n_laguerre, alpha, False)
+    lag = []
+    for point, weight in zip(x, w_r):
+        '''
+        we change variables 
+        '''
+        new_point  = np.sqrt(2*point)
+        new_weight = weight*np.sqrt(2)
 
-# build library
-leblib = PyLebedev()
-s,w_spher = leblib.get_points_and_weights(n_lebedev)
-leb = []
-for p, w in zip(s,w_spher):
-    leb.append([p, np.pi*4*w])
+        # append
+        lag.append([new_point, new_weight])
 
-# print("Spherical integration:")
-# print(leb)
+    # print("Radial integration: ")
+    # print(lag)
 
+    # build library
+    leblib = PyLebedev()
+    s,w_spher = leblib.get_points_and_weights(n_lebedev)
+    leb = []
+    for p, w in zip(s,w_spher):
+        leb.append([p, np.pi*4*w])
 
-'''
-Tensorize these
-'''
-# empty list
-tensorized = []
+    # print("Spherical integration:")
+    # print(leb)
 
-# # iterate
-# for radial in lag:
-#     for ang_p in leb:
-#         for ang_u in leb:
-#             for special in special_quadrature:
-#                 tensorized.append([radial, ang_p, special, ang_u])
+    '''
+    Tensorize these
+    '''
+    # empty list
+    tensorized = []
 
-for radial in lag:
-    for ang_p in leb:
-        for ang_u in leb:
-            for radial_u in lag:
-                tensorized.append([radial, ang_p, radial_u, ang_u])
+    for radial in lag:
+        for ang_p in leb:
+            for ang_u in leb:
+                for radial_u in lag:
+                    tensorized.append([radial, ang_p, radial_u, ang_u])
 
+    return tensorized
 
-# print()
-# print("tensorized: ")
-# print(tensorized)
+# saves the quadrature as pkl file
+def save_quadrature():
+    # obtain the quadrature rule
+    tensorized = quadrature()
 
-'''
-Test the function
-'''
-# test functions
-def f(r, t, p):
-    return 1
-def g(r, t, p):
-    return r
+    # save full quadrature
+    with open('quadrature.pkl', 'wb') as file:
+        pickle.dump(tensorized, file)
 
-# numerical integration
-partial_sum = 0
-for quad in tensorized:
-    # radial quadrature
-    r_p = quad[0][0]
-    w_p = quad[0][1]
+    print("quadrature has been saved")
 
-    # angular quadrature
-    ang_p   =  quad[1][0]
-    ang_w_p = quad[1][1]
+# this tests the quadrature
+def test(tensorized):
+    '''
+    Test the function
+    '''
+    # test functions
+    def f(r, t, p):
+        return 1
 
-    # special radial quadrature
-    r_u = quad[2][0]
-    w_u = quad[2][1]
-    print("special quadrature")
-    print(r_u)
-    print(w_u)
-    print()
+    def g(r, t, p):
+        return 1
 
-    # angular quadrature for u
-    ang_u   = quad[3][0]
-    ang_w_u = quad[3][1] 
+    # numerical integration
+    partial_sum = 0
+    for quad in tensorized:
+        # radial quadrature
+        r_p = quad[0][0]
+        w_p = quad[0][1]
 
-    # cartesian quadrature point on the sphere
-    x_p = ang_p[0]
-    y_p = ang_p[1]
-    z_p = ang_p[2]
+        # angular quadrature
+        ang_p   =  quad[1][0]
+        ang_w_p = quad[1][1]
 
-    x_u = ang_u[0]
-    y_u = ang_u[1]
-    z_u = ang_u[2]
+        # special radial quadrature
+        r_u = quad[2][0]
+        w_u = quad[2][1]
+        print("special quadrature")
+        print(r_u)
+        print(w_u)
+        print()
 
-    # perform the partial sum
-    f1 = f(r_p, theta(x_p, y_p, z_p), phi(x_p, y_p))
-    f2 = g(r_u, theta(x_u, y_u, z_u), phi(x_u, y_u))
+        # angular quadrature for u
+        ang_u   = quad[3][0]
+        ang_w_u = quad[3][1] 
 
-    partial_sum = partial_sum + (w_p*ang_w_p)*(w_u*ang_w_u)*f1*f2
+        # cartesian quadrature point on the sphere
+        x_p = ang_p[0]
+        y_p = ang_p[1]
+        z_p = ang_p[2]
 
-print(partial_sum)
+        x_u = ang_u[0]
+        y_u = ang_u[1]
+        z_u = ang_u[2]
 
-# save full quadrature
-with open('quadrature.pkl', 'wb') as file:
-    pickle.dump(tensorized, file)
+        # perform the partial sum
+        f1 = f(r_p, theta(x_p, y_p, z_p), phi(x_p, y_p))
+        f2 = g(r_u, theta(x_u, y_u, z_u), phi(x_u, y_u))
+
+        partial_sum = partial_sum + (w_p*ang_w_p)*(w_u*ang_w_u)*f1*f2
+
+    print(partial_sum)
+
+# the main function
+def main():
+    # obtain the quadrature
+    quad = quadrature()
+
+    # perfrom the test
+    test(quad)
+
+    # save the quadrature
+    save_quadrature()
+
+if __name__ == "__main__":
+    main()
