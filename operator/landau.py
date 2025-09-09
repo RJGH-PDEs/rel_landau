@@ -1,8 +1,7 @@
 import sympy as sp
 import pickle
-from numba import njit
 # import quadrature unpacker
-from unpack import unpack_quadrature
+from quadrature import unpack_quad, unpack_quadrature
 # import integrand
 from integrand import integrand
 # symbolic parts

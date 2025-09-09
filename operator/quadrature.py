@@ -36,6 +36,72 @@ def phi(x, y):
 '''
 Unpack the quadrature
 '''
+# Unpacks the quadrature so that integration is easy
+def unpack_quad(quad):
+    '''
+    Given the initial form of how the quadrature is saved,
+    this, unpacks and rearranges the quadrature, so that
+    it is easy to use.
+
+    Input:
+        - quad: 
+            the quadrature for p and q, with a specific
+            order, and in cartesian coordinates for
+            the angular part.
+
+    Output: 
+        - the quadrature in the shape:
+            [weight, points]
+            
+            weight is a scalar, points is in spherical 
+            coordinates, [r_p, t_p, p_p, r_q, t_q, p_q]
+    '''
+
+    # radial quadrature for p
+    r_p = quad[0][0]
+    w_p = quad[0][1]
+
+    # angular quadrature for p
+    ang_p   = quad[1][0]    # point (x, y, z) on the unit sphere
+    ang_w_p = quad[1][1]
+
+    # radial quadrature for q
+    r_q = quad[2][0]
+    w_q = quad[2][1]
+    
+    # angular quadrature for q
+    ang_q   = quad[3][0]    # point (x, y, z) on the unit sphere
+    ang_w_q = quad[3][1] 
+
+    # cartesian quadrature point on the sphere
+    x_p = ang_p[0]
+    y_p = ang_p[1]
+    z_p = ang_p[2]
+
+    x_q = ang_q[0]
+    y_q = ang_q[1]
+    z_q = ang_q[2]
+
+    # recover angular variables
+    t_p = theta(x_p, y_p, z_p)
+    p_p = phi(x_p, y_p)
+
+    t_q = theta(x_q, y_q, z_q)
+    p_q = phi(x_q, y_q)
+
+    # full weight 
+    weight = w_p*ang_w_p*w_q*ang_w_q 
+    
+    '''
+    Now we need to deal how to return this 
+    '''
+    points = []
+
+    return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
+
+'''
+this is an older version
+'''
 def unpack_quadrature(quad):
     # radial quadrature
     r_p = quad[0][0]
@@ -46,36 +112,36 @@ def unpack_quadrature(quad):
     ang_w_p = quad[1][1]
 
     # special radial quadrature
-    r_u = quad[2][0]
-    w_u = quad[2][1]
+    r_q = quad[2][0]
+    w_q = quad[2][1]
     
     # angular quadrature for u
-    ang_u   = quad[3][0]
-    ang_w_u = quad[3][1] 
+    ang_q   = quad[3][0]
+    ang_w_q = quad[3][1] 
 
     # cartesian quadrature point on the sphere
     x_p = ang_p[0]
     y_p = ang_p[1]
     z_p = ang_p[2]
 
-    x_u = ang_u[0]
-    y_u = ang_u[1]
-    z_u = ang_u[2]
+    x_q = ang_q[0]
+    y_q = ang_q[1]
+    z_q = ang_q[2]
 
     # exctract angular variables
     t_p = theta(x_p, y_p, z_p)
     p_p = phi(x_p, y_p)
 
-    t_u = theta(x_u, y_u, z_u)
-    p_u = phi(x_u, y_u)
+    t_q = theta(x_q, y_q, z_q)
+    p_q = phi(x_q, y_q)
 
     # full weight 
-    weight = w_p*ang_w_p*w_u*ang_w_u 
+    weight = w_p*ang_w_p*w_q*ang_w_q 
     
     '''
     Now we need to deal how to return this 
     '''
-    return [weight, r_p, t_p, p_p, r_u, t_u, p_u]
+    return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
 
 '''
 On this file we try to create a list that
@@ -127,7 +193,7 @@ def quadrature():
         for ang_p in leb:
             for ang_u in leb:
                 for radial_u in lag:
-                    tensorized.append([radial, ang_p, radial_u, ang_u])
+                    tensorized.append([radial, ang_p, radial_u, ang_u]) # this is important, need to keep track order for unpacking
 
     return tensorized
 
@@ -157,40 +223,13 @@ def test(tensorized):
     # numerical integration
     partial_sum = 0
     for quad in tensorized:
-        # radial quadrature
-        r_p = quad[0][0]
-        w_p = quad[0][1]
-
-        # angular quadrature
-        ang_p   =  quad[1][0]
-        ang_w_p = quad[1][1]
-
-        # special radial quadrature
-        r_u = quad[2][0]
-        w_u = quad[2][1]
-        print("special quadrature")
-        print(r_u)
-        print(w_u)
-        print()
-
-        # angular quadrature for u
-        ang_u   = quad[3][0]
-        ang_w_u = quad[3][1] 
-
-        # cartesian quadrature point on the sphere
-        x_p = ang_p[0]
-        y_p = ang_p[1]
-        z_p = ang_p[2]
-
-        x_u = ang_u[0]
-        y_u = ang_u[1]
-        z_u = ang_u[2]
-
+        # unpack the quadrature 
+        weight, r_p, t_p, p_p, r_q, t_q, p_q = unpack_quad(quad)
         # perform the partial sum
-        f1 = f(r_p, theta(x_p, y_p, z_p), phi(x_p, y_p))
-        f2 = g(r_u, theta(x_u, y_u, z_u), phi(x_u, y_u))
+        f1 = f(r_p, t_p, p_p)
+        f2 = g(r_q, t_q, p_q)
 
-        partial_sum = partial_sum + (w_p*ang_w_p)*(w_u*ang_w_u)*f1*f2
+        partial_sum = partial_sum + weight*f1*f2
 
     print(partial_sum)
 

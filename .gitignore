@@ -177,4 +177,4 @@ cython_debug/
 # other stuff
 ./operator/__pycache__/
 ./operator/quadrature.pkl
-./operator/results/
+/operator/results/
