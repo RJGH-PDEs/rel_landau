@@ -23,7 +23,6 @@ def operator(k, f, g, test, quadrature):
         weight, points = unpack_quadrature(q)
         
         # sample the function
-        # sample = integrand(k_sym, f_sym, g_sym, test_sym, points)
         sample = integrand(k, f, g, test, points)
         # update sum
         integral = integral + weight*sample

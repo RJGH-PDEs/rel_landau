@@ -95,8 +95,6 @@ def unpack_quad(quad):
     '''
     Now we need to deal how to return this 
     '''
-    points = []
-
     return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
 
 '''
@@ -203,7 +201,7 @@ def save_quadrature():
     tensorized = quadrature()
 
     # save full quadrature
-    with open('quadrature.pkl', 'wb') as file:
+    with open('./quadrature/quadrature.pkl', 'wb') as file:
         pickle.dump(tensorized, file)
 
     print("quadrature has been saved")
