@@ -10,17 +10,15 @@ def integrand(k, f, g, gt, points):
     '''
     Input:
         - k:    the kernel
-        - f:    basis function 
-        - g:    gradient of basis function  -- Gaussian weight 
-        - gt:   gradient of test function   -- no weight
-        - pts:  p, q in spherical coordinates
+        - f:    basis function (p)
+        - g:    gradient of basis function  -- Gaussian weight (q)
+        - gt:   gradient of test function   -- no weight (p - q)
+        - pts:   coordinates of p, q in spherical coordinates
 
     Output: 
         - the integrand, evaluated at p, q
     '''
-    result = 0
-
-    # the evaluation points
+    # the evaluation points, just be careful about this ordering
     # p
     rp = points[0]
     tp = points[1]
@@ -32,7 +30,7 @@ def integrand(k, f, g, gt, points):
 
     # print
     a = f(rp, tp, pp)*g(rq, tq, pq)
-    b = (k(rp, tp, pp, rq, tq, pq)@(gt(rp, tp, pp) - gt(rq, tq, pq)))
+    b = k(rp, tp, pp, rq, tq, pq)@(gt(rp, tp, pp) - gt(rq, tq, pq))
     
     # inner product
     result = np.dot(a.flatten(),b.flatten())
@@ -57,9 +55,9 @@ def pieces(select, k_sym):
     m2 = select[2][2]
 
     # produce symbolic pieces
+    test_sym    = gradient(basis(k, l, m))
     f_sym       = basis(k1, l1, m1)
     g_sym       = grad_weighted(basis(k2, l2, m2))
-    test_sym    = gradient(basis(k, l, m))
     
     # lambdafy
     rp, tp, pp, rq, tq, pq = sp.symbols('rp tp pp rq tq pq')
@@ -77,17 +75,17 @@ def pieces(select, k_sym):
 # testing the integrand
 def test():
     # choose the three functions
-    # test function
+    # test function, phi
     k = 1
     l = 0
     m = 0
     
-    # trial function, no gradient
+    # trial function f(p), no gradient
     k1 = 1
     l1 = 0
     m1 = 0
     
-    # trial function, gradient
+    # trial function \nabla g(p), gradient
     k2 = 1
     l2 = 0
     m2 = 0
@@ -112,7 +110,7 @@ def test():
     # energy = sp.sqrt(1+r**2)  # relativistic
     energy = (r**2)/2 # non-relativistic
 
-    # Kernel 
+    # symbolic kernel 
     rel  = False
     verb = False
     kern = kernel(energy, verb, rel)

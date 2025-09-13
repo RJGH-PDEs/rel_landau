@@ -9,8 +9,8 @@ def energy_grad(energy):
     r_hat = sp.Matrix([sp.sin(t)*sp.cos(p), sp.sin(t)*sp.sin(p), sp.cos(t)])
 
     # take partial
-    partial = sp.diff(energy, r)
-    eg = partial*r_hat
+    partial     = sp.diff(energy, r)
+    eg          = partial*r_hat
 
     # return 
     return eg
@@ -43,14 +43,14 @@ def kernel(energy, verbose=False, rel=False):
     if verbose:
         print("u: ", u)
 
-    altern =  u.dot(u)*sp.eye(3) - u*u.T
+    kern =  u.dot(u)*sp.eye(3) - u*u.T
     # altern = sp.simplify(altern)
     
     if rel:
         # Relativistic part
         z = (ep+eq)/2
         cross = z.cross(u)
-        altern = altern - cross*cross.T
+        kern = kern - cross*cross.T
         # altern = sp.simplify(altern)
     
     if verbose:
@@ -60,17 +60,17 @@ def kernel(energy, verbose=False, rel=False):
         print(energy)
         print()
         print("kernel: ")
-        print(altern)
+        print(kern)
         print()
         print("u - relative velocity: ")
         print(u)
         print()
         print("check conservation (S*u) should be zero 0")
         print()
-        print(sp.simplify(altern * u))
+        print(sp.simplify(kern * u))
         print()
 
-    return altern
+    return kern
 
 # cartesian energy grad
 def energy_grad_cart():

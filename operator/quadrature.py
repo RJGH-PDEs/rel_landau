@@ -156,11 +156,14 @@ def quadrature():
 
     # extract the coefficients
     alpha = 1/2
-    x,w_r = roots_genlaguerre(n_laguerre, alpha, False)
+    x, w_r = roots_genlaguerre(n_laguerre, alpha, False)
     lag = []
     for point, weight in zip(x, w_r):
         '''
-        we change variables 
+        we change variables. This is 
+        needed because we are integrating 
+        with the weight e^(-r^2/2), in 
+        spherical coordinates.
         '''
         new_point  = np.sqrt(2*point)
         new_weight = weight*np.sqrt(2)
@@ -173,10 +176,10 @@ def quadrature():
 
     # build library
     leblib = PyLebedev()
-    s,w_spher = leblib.get_points_and_weights(n_lebedev)
+    s, w_spher = leblib.get_points_and_weights(n_lebedev)
     leb = []
     for p, w in zip(s,w_spher):
-        leb.append([p, np.pi*4*w])
+        leb.append([p, 4*np.pi*w])
 
     # print("Spherical integration:")
     # print(leb)
@@ -189,9 +192,9 @@ def quadrature():
 
     for radial in lag:
         for ang_p in leb:
-            for ang_u in leb:
-                for radial_u in lag:
-                    tensorized.append([radial, ang_p, radial_u, ang_u]) # this is important, need to keep track order for unpacking
+            for ang_q in leb:
+                for radial_q in lag:
+                    tensorized.append([radial, ang_p, radial_q, ang_q]) # this is important, need to keep track order for unpacking
 
     return tensorized
 
@@ -204,7 +207,7 @@ def save_quadrature():
     with open('./quadrature/quadrature.pkl', 'wb') as file:
         pickle.dump(tensorized, file)
 
-    print("quadrature has been saved")
+    print("quadrature has been saved.")
 
 # this tests the quadrature
 def test(tensorized):
