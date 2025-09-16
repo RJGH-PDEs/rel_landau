@@ -18,7 +18,12 @@ def integrand(k, f, g, gt, points):
     Output: 
         - the integrand, evaluated at p, q
     '''
-    # the evaluation points, just be careful about this ordering
+    '''
+    the evaluation points, 
+    just be careful about this ordering. 
+    The order comes from unpack_quadrature.
+    points = [r_p, t_p, p_p, r_q, t_q, p_q]
+    '''
     # p
     rp = points[0]
     tp = points[1]

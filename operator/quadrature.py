@@ -95,7 +95,9 @@ def unpack_quad(quad):
     '''
     Now we need to deal how to return this 
     '''
-    return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
+    pts = [r_p, t_p, p_p, r_q, t_q, p_q]
+    return weight, pts
+    # return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
 
 '''
 this is an older version
@@ -209,6 +211,12 @@ def save_quadrature():
 
     print("quadrature has been saved.")
 
+# loads the quadrature
+def load_quad():
+    with open('quadrature/quadrature.pkl', 'rb') as file:
+        data = pickle.load(file)
+    return data
+
 # this tests the quadrature
 def test(tensorized):
     '''
@@ -225,7 +233,8 @@ def test(tensorized):
     partial_sum = 0
     for quad in tensorized:
         # unpack the quadrature 
-        weight, r_p, t_p, p_p, r_q, t_q, p_q = unpack_quad(quad)
+        weight, points = unpack_quad(quad)
+        r_p, t_p, p_p, r_q, t_q, p_q = points # this is the convention
         # perform the partial sum
         f1 = f(r_p, t_p, p_p)
         f2 = g(r_q, t_q, p_q)

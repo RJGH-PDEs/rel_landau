@@ -1,18 +1,11 @@
 import sympy as sp
-import pickle
 # import quadrature unpacker
-from quadrature import unpack_quad, unpack_quadrature
+from quadrature import unpack_quad, unpack_quadrature, load_quad
 # import integrand
 from integrand import integrand
 # symbolic parts
 from kern import kernel
 from integrand import pieces
-
-# loads the quadrature
-def load_quad():
-    with open('quadrature.pkl', 'rb') as file:
-        data = pickle.load(file)
-    return data
 
 # The Landau Operator
 def operator(k, f, g, test, quadrature):
@@ -20,8 +13,7 @@ def operator(k, f, g, test, quadrature):
     integral = 0
     for q in quadrature:
         # unpack quadrature 
-        weight, points = unpack_quadrature(q)
-        
+        weight, points = unpack_quad(q)
         # sample the function
         sample = integrand(k, f, g, test, points)
         # update sum
@@ -36,7 +28,7 @@ def operator_parallel(select, shared_data):
     quad        = shared_data[0]
     sym_kern    = shared_data[1]
 
-    # produce the symbolic pieces
+    # produce the numpy pieces
     k, f, g, test = pieces(select, sym_kern)
 
     # compute the landau operator
