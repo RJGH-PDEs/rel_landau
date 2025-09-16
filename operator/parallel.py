@@ -62,16 +62,17 @@ def parallel(sd, n):
     return results
 
 # produce collision matrix
-def parallel_setup(n, energy):
+def parallel_setup(n, energy, rel):
     # load quadrature
     quad = load_quad()
     print("quadrature size: ", len(quad))
 
     # produce the symbolic kernel, dependent on the energy
-    kern = kernel(energy)
+    verbose = False
+    kern    = kernel(energy, verbose, rel)
 
     # define the shared data
-    sd = [quad, kern]
+    sd = [quad, kern] # this has to be in accordance to the unpacking at "operator_parallel"
                 
     # compute it and time it
     start = time.time()
@@ -85,6 +86,9 @@ def parallel_setup(n, energy):
     return r
 
 def compute_col_tensor():
+    # relativistic flag
+    rel = False
+
     # select the degrees of freedom
     n = 2
 
@@ -94,9 +98,6 @@ def compute_col_tensor():
     '''
     Choose the energy
     '''
-    # radial symbol
-    # r = sp.symbols('r')
-    # energy = (1/2)*r**2       # non-relativistic
     # energy = sp.sqrt(1+r**2)  # relativistic
     # energy   = r**3             # polynomial
     # energy = 1 + 0.43991322*r**2 - 0.0338162*r**4
@@ -104,11 +105,16 @@ def compute_col_tensor():
     # energy = 1.0 + 0.35854196*r**2 - 0.01482466*r**4  + 0.00028524*r**6
 
     # load the energy
-    with open('../cheby/eh.pkl', 'rb') as f:
-       energy = pickle.load(f)
+    if rel:
+        with open('../cheby/eh.pkl', 'rb') as f:
+            energy = pickle.load(f)
+    else:
+        # radial symbol
+        r = sp.symbols('r')
+        energy = (1/2)*r**2
 
     # compute the tensor, results will contain it
-    result = parallel_setup(n, energy)
+    result = parallel_setup(n, energy, rel)
 
     # print the result
     print(result)
@@ -116,6 +122,7 @@ def compute_col_tensor():
     # save the result
     with open(file_name, 'wb') as file:
         pickle.dump(result, file)
+        print("the result has been saved")
 
 # main function
 if __name__ == "__main__":

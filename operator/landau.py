@@ -1,6 +1,6 @@
 import sympy as sp
 # import quadrature unpacker
-from quadrature import unpack_quad, unpack_quadrature, load_quad
+from quadrature import unpack_quad, load_quad
 # import integrand
 from integrand import integrand
 # symbolic parts

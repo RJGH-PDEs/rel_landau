@@ -7,3 +7,6 @@
 # quadrature data
 /operator/quadrature/
 
+# sparse operators
+/operator/sparse_operators/
+
