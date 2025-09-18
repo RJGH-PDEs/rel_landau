@@ -99,6 +99,53 @@ def unpack_quad(quad):
     return weight, pts
     # return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
 
+# Unpacks the quadrature so that integration is easy
+def unpack_mass_quad(quad):
+    '''
+    Given the initial form of how the quadrature is saved,
+    this, unpacks and rearranges the quadrature, so that
+    it is easy to use.
+
+    Input:
+        - quad: 
+            the quadrature for p and q, with a specific
+            order, and in cartesian coordinates for
+            the angular part.
+
+    Output: 
+        - the quadrature in the shape:
+            [weight, points]
+            
+            weight is a scalar, points is in spherical 
+            coordinates, [r, t, p]
+    '''
+
+    # radial quadrature for p
+    r = quad[0][0]
+    w = quad[0][1]
+
+    # angular quadrature for p
+    ang     = quad[1][0]    # point (x, y, z) on the unit sphere
+    ang_w   = quad[1][1]
+
+    # cartesian quadrature point on the sphere
+    x = ang[0]
+    y = ang[1]
+    z = ang[2]
+
+    # recover angular variables
+    t = theta(x, y, z)
+    p = phi(x, y)
+
+    # full weight 
+    weight = w*ang_w
+    
+    '''
+    Now we need to deal how to return this 
+    '''
+    pts = [r, t, p]
+    return weight, pts
+ 
 '''
 this is an older version
 '''
@@ -153,7 +200,7 @@ def quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 8
+    n_laguerre  = 7
     n_lebedev   = 5
 
     # extract the coefficients
@@ -200,6 +247,57 @@ def quadrature():
 
     return tensorized
 
+# mass quadrature
+def mass_quadrature():
+    '''
+    choose the integration order here
+    '''
+    n_laguerre  = 7
+    n_lebedev   = 5
+
+    # extract the coefficients
+    alpha = 1/2
+    x, w_r = roots_genlaguerre(n_laguerre, alpha, False)
+    lag = []
+    for point, weight in zip(x, w_r):
+        '''
+        we change variables. This is 
+        needed because we are integrating 
+        with the weight e^(-r^2/2), in 
+        spherical coordinates.
+        '''
+        new_point  = np.sqrt(2*point)
+        new_weight = weight*np.sqrt(2)
+
+        # append
+        lag.append([new_point, new_weight])
+
+    # print("Radial integration: ")
+    # print(lag)
+
+    # build library
+    leblib = PyLebedev()
+    s, w_spher = leblib.get_points_and_weights(n_lebedev)
+    leb = []
+    for p, w in zip(s,w_spher):
+        leb.append([p, 4*np.pi*w])
+
+    # print("Spherical integration:")
+    # print(leb)
+
+    '''
+    Tensorize these
+    '''
+    # empty list
+    tensorized = []
+
+    for radial in lag:
+        for angle in leb:
+                tensorized.append([radial, angle]) # this is important, need to keep track order for unpacking
+
+    return tensorized
+
+
 # saves the quadrature as pkl file
 def save_quadrature():
     # obtain the quadrature rule
@@ -209,15 +307,31 @@ def save_quadrature():
     with open('./quadrature/quadrature.pkl', 'wb') as file:
         pickle.dump(tensorized, file)
 
-    print("quadrature has been saved.")
+    print("operator quadrature has been saved.")
+   
+# save mass quadrature
+def save_mass_quadrature():
+    # obtain the mass quadrature
+    tensorized = mass_quadrature()
+    
+    # save full quadrature
+    with open('./quadrature/mass_quadrature.pkl', 'wb') as file:
+        pickle.dump(tensorized, file)
 
+    print("mass quadrature has been saved.")
+ 
 # loads the quadrature
 def load_quad():
-    with open('quadrature/quadrature.pkl', 'rb') as file:
+    with open('./quadrature/quadrature.pkl', 'rb') as file:
         data = pickle.load(file)
     return data
 
-# this tests the quadrature
+def load_mass_quad():
+    with open('./quadrature/mass_quadrature.pkl', 'rb') as file:
+        data = pickle.load(file)
+    return data
+
+# this tests the full operator quadrature
 def test(tensorized):
     '''
     Test the function
@@ -241,18 +355,40 @@ def test(tensorized):
 
         partial_sum = partial_sum + weight*f1*f2
 
-    print(partial_sum)
+    print("six dimensional test: ", partial_sum)
+
+# test the mass quadrature
+def mass_test(quad):
+    '''
+    Test the function
+    '''
+    # test functions
+    def f(r, t, p):
+        result = (3/2 -r**2)**2
+        return result 
+
+    # numerical integration
+    partial_sum = 0
+    for quad in quad:
+        # unpack the quadrature 
+        weight, points = unpack_mass_quad(quad)
+        r, t, p = points # this is the convention
+        # perform the partial sum
+        sample = f(r, t, p)
+
+        partial_sum = partial_sum + weight*sample
+
+    print("three dimensional test: ", partial_sum)
 
 # the main function
 def main():
-    # obtain the quadrature
-    quad = quadrature()
-
     # perfrom the test
-    test(quad)
-
+    test(quadrature())
+    # mass_test(load_mass_quad())
+    mass_test(mass_quadrature())
     # save the quadrature
     save_quadrature()
+    save_mass_quadrature()
 
 if __name__ == "__main__":
     main()

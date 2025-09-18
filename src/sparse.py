@@ -14,6 +14,12 @@ def ind(k, ll, m, L):
     '''
     return (L+1)*(L+1)*k + lm_index(ll, m)
 
+def test_indices():
+    k = 1
+    l = 2
+    m = 1
+    print(lm_index(l, m))
+
 # loads and returns data
 def load_operator(name):
     # load
@@ -163,7 +169,7 @@ def sparse_op(do):
 
 # main funtion
 def main():
-    n = 2
+    n = 3
     L = n - 1       # max value l can take?
     tol = 0.0001    # tolerance for the nonzeros
 
@@ -195,4 +201,4 @@ def main():
     
 # execute main funtion
 if __name__ == "__main__":
-    main()
+    test_indices() 

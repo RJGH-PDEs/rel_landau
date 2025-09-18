@@ -3,7 +3,7 @@ import numpy as np
 
 # symbolic parts
 from kern import kernel
-from basis import basis, grad_weighted, gradient
+from basis import basis, grad_weighted, gradient, mu_const
 
 # the integrand
 def integrand(k, f, g, gt, points):
@@ -33,7 +33,7 @@ def integrand(k, f, g, gt, points):
     tq = points[4]
     pq = points[5]
 
-    # print
+    # obtain parts
     a = f(rp, tp, pp)*g(rq, tq, pq)
     b = k(rp, tp, pp, rq, tq, pq)@(gt(rp, tp, pp) - gt(rq, tq, pq))
     
@@ -61,8 +61,10 @@ def pieces(select, k_sym):
 
     # produce symbolic pieces
     test_sym    = gradient(basis(k, l, m))
-    f_sym       = basis(k1, l1, m1)
-    g_sym       = grad_weighted(basis(k2, l2, m2))
+
+    # the two basis functiosn will include the mu constant
+    f_sym       = mu_const(k1,l1)*basis(k1, l1, m1)
+    g_sym       = mu_const(k2,l2)*grad_weighted(basis(k2, l2, m2))
     
     # lambdafy
     rp, tp, pp, rq, tq, pq = sp.symbols('rp tp pp rq tq pq')

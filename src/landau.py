@@ -2,10 +2,9 @@ import sympy as sp
 # import quadrature unpacker
 from quadrature import unpack_quad, load_quad
 # import integrand
-from integrand import integrand
+from integrand import pieces, integrand
 # symbolic parts
 from kern import kernel
-from integrand import pieces
 
 # The Landau Operator
 def operator(k, f, g, test, quadrature):

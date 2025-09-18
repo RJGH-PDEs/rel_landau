@@ -90,7 +90,7 @@ def compute_col_tensor():
     rel = False
 
     # select the degrees of freedom
-    n = 2
+    n = 3
 
     # where the result will be saved
     file_name = 'results/test.pkl'
