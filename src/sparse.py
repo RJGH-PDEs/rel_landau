@@ -15,10 +15,11 @@ def ind(k, ll, m, L):
     return (L+1)*(L+1)*k + lm_index(ll, m)
 
 def test_indices():
-    k = 1
-    l = 2
-    m = 1
-    print(lm_index(l, m))
+    k = 0
+    l = 0
+    m = 0
+    L = 2
+    print(ind(k, l, m, L))
 
 # loads and returns data
 def load_operator(name):
@@ -162,6 +163,7 @@ def sparse_op(do):
     sparse = []
     
     for dense_matrix in do:
+        print("check for symmetry: ", np.max(np.abs(dense_matrix - dense_matrix.T)))
         sparse.append(csr_matrix(dense_matrix))
     
     print("finished computing the sparse tensor (list of sparse matrices).")
@@ -201,4 +203,4 @@ def main():
     
 # execute main funtion
 if __name__ == "__main__":
-    test_indices() 
+    main()

@@ -61,10 +61,15 @@ def pieces(select, k_sym):
 
     # produce symbolic pieces
     test_sym    = gradient(basis(k, l, m))
-
+    print("test: ", test_sym)
+    print()
     # the two basis functiosn will include the mu constant
-    f_sym       = mu_const(k1,l1)*basis(k1, l1, m1)
-    g_sym       = mu_const(k2,l2)*grad_weighted(basis(k2, l2, m2))
+    f_sym       = mu_const(k1, l1)*basis(k1, l1, m1)
+    print("f: ", f_sym)
+    print()
+    g_sym       = mu_const(k2, l2)*grad_weighted(basis(k2, l2, m2))
+    print("g: ", g_sym)
+    print()
     
     # lambdafy
     rp, tp, pp, rq, tq, pq = sp.symbols('rp tp pp rq tq pq')
@@ -88,12 +93,12 @@ def test():
     m = 0
     
     # trial function f(p), no gradient
-    k1 = 1
-    l1 = 0
+    k1 = 0
+    l1 = 1
     m1 = 0
     
     # trial function \nabla g(p), gradient
-    k2 = 1
+    k2 = 2
     l2 = 0
     m2 = 0
 

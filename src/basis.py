@@ -50,7 +50,7 @@ def basis(k, l, m):
         sphr = sphr*sp.sin(abs(m)*p)
 
     # include spherical harmonic constant
-    sphr = spher_const(l,m)*sphr
+    sphr = sphr*spher_const(l,m)
 
     # Radial part
     radial = 1
@@ -95,6 +95,7 @@ def gradient(f):
 
     # compute the gradient
     gradient = sp.simplify(fr*v1 + ft*v2 + fp*v3)
+    # gradient = fr*v1 + ft*v2 + fp*v3
     
     return gradient
 
@@ -119,21 +120,23 @@ def grad_weighted(f):
 # A test
 def test():
     # parameters
-    k = 1
-    l = 0
-    m = 0
+    k = 0
+    l = 1
+    m = 1
 
     # basis function
     f = basis(k, l, m)
 
     # print the basis
     print("basis: ", f)
-
+    print()
     # print the gradient
     print("gradient: ", gradient(f))
+    print()
 
     # print weighted gradient
     print("weighet gradient: ", grad_weighted(f))
+    print()
 
 # The main function
 def main():

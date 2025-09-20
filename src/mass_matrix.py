@@ -15,8 +15,6 @@ def integrand(f, phi, point):
     # parts
     trial   = f(r, t, p)
     test    = phi(r, t, p)
-    # print((3/2 - r**2), trial, test)
-    # return (3/2 - r**2)**2
 
     return trial*test
 
@@ -35,11 +33,11 @@ def pieces(select):
     
     # produce symbolic pieces
     test_sym    = basis(kj, lj, mj)
-    # print(test_sym)
+    print(test_sym)
 
     # the two basis functiosn will include the mu constant
-    f_sym       = basis(ki, li, mi)*mu_const(ki,li)
-    # print(f_sym) 
+    f_sym       = basis(ki, li, mi)#*mu_const(ki,li)
+    print(f_sym) 
     # lambdafy
     r, t, p = sp.symbols('r t p')
 
@@ -70,7 +68,7 @@ def coefficient(select, quad):
 # test a coefficient
 def coeff_test():
     # select
-    select = [[1, 0, 0],[1, 0, 0]]
+    select = [[1, 0, 0],[2, 1, 0]]
     
     # obtain the mass quadrature
     quad = load_mass_quad()

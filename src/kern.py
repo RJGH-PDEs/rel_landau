@@ -39,11 +39,12 @@ def kernel(energy, verbose=False, rel=False):
 
     # Alternative way
     u = ep - eq
-    
+        
     if verbose:
         print("u: ", u)
 
     kern =  u.dot(u)*sp.eye(3) - u*u.T
+    # print( u*u.T)
     # altern = sp.simplify(altern)
     
     if rel:

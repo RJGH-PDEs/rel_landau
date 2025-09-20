@@ -49,6 +49,7 @@ def operator_test(select, energy):
 
     # produce the symbolic pieces
     sym_kern        = kernel(energy)
+    # print(sym_kern)
     k, f, g, test   = pieces(select, sym_kern)
 
     # compute the landau operator
@@ -65,18 +66,18 @@ def test():
 
     # test function
     k = 1
-    l = 0
-    m = 0
+    l = 1
+    m = 1
     
     # f
-    k1 = 1
+    k1 = 0
     l1 = 1
     m1 = 1
     
     # g
     k2 = 0
-    l2 = 1
-    m2 = 1
+    l2 = 0
+    m2 = 0
 
     select = [[k,l,m],[k1,l1,m1],[k2,l2,m2]]
 
