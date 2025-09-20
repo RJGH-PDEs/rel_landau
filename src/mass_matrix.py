@@ -1,9 +1,13 @@
-# sympy
+# numpy, sympy
+import numpy as np
 import sympy as sp
+import pickle
 # basis
 from basis import basis, mu_const
 # integration
 from quadrature import unpack_mass_quad, load_mass_quad
+# index
+from sparse import ind
 
 # the integrand for the mass matrix
 def integrand(f, phi, point):
@@ -20,24 +24,26 @@ def integrand(f, phi, point):
 
 # produces the pieces given a selection of the indices
 def pieces(select):
-    # trial function
+    # test function
     ki = select[0][0]
     li = select[0][1]
     mi = select[0][2]
-    # print(ki, li, mi)
-    # test function
+    # print(kj, lj, mj)
+
+    # trial function
     kj = select[1][0]
     lj = select[1][1]
     mj = select[1][2]
-    # print(kj, lj, mj)
-    
+    # print(ki, li, mi)
+
     # produce symbolic pieces
-    test_sym    = basis(kj, lj, mj)
-    print(test_sym)
+    test_sym    = basis(ki, li, mi)
+    # print("test  function: ", test_sym)
 
     # the two basis functiosn will include the mu constant
-    f_sym       = basis(ki, li, mi)#*mu_const(ki,li)
-    print(f_sym) 
+    f_sym       = basis(kj, lj, mj)*mu_const(kj, lj)
+    # print("basis function: ", f_sym) 
+
     # lambdafy
     r, t, p = sp.symbols('r t p')
 
@@ -68,7 +74,9 @@ def coefficient(select, quad):
 # test a coefficient
 def coeff_test():
     # select
-    select = [[1, 0, 0],[2, 1, 0]]
+    test   = [2, 1, 0]
+    basis  = [1, 0, 0]
+    select = [test, basis]
     
     # obtain the mass quadrature
     quad = load_mass_quad()
@@ -77,9 +85,63 @@ def coeff_test():
     coeff = coefficient(select, quad)
     print("for: ", select, " the coeff is: ", coeff)
 
+# builds the mass matrix 
+def mass_matrix(n):
+    # number of degrees of freedom, max value "l" can take
+    N = n**3
+    L = n - 1
+
+    # obtain the mass quadrature
+    quad = load_mass_quad()
+
+    # build the empty matrix
+    M = np.zeros((N,N))
+
+    # iterate over test functions
+    for k in range(0, n):
+        for l in range(0, n):
+            for m in range(-l, l+1):
+
+                # iterate over all basis functions
+                for k1 in range(0, n):
+                    for l1 in range(0, n):
+                        for m1 in range(-l1, l1+1):
+
+                            # select
+                            test   = [k, l, m]
+                            basis  = [k1, l1, m1]
+                            select = [test, basis]
+                            
+                            # indices
+                            i = ind(k, l, m, L)     # test 
+                            j = ind(k1, l1, m1, L)  # trial
+                            M[i][j] = coefficient(select, quad)
+ 
+    return M
+
+# saves the mass inverse as pkl
+def save_inv_mass():
+    # value of n, determines the number of dof
+    n = 3
+
+    # coeff_test()
+    m = mass_matrix(n)
+
+    # invert
+    m_inv = np.linalg.inv(m)
+
+    # check that these are inverses
+    print(np.dot(m, m_inv))
+
+    # save full quadrature
+    with open('./mass/mass.pkl', 'wb') as file:
+        pickle.dump(m_inv, file)
+
+    print("mass inverse has been saved.")
+ 
 # The main function
 def main():
-    coeff_test()
+    save_inv_mass() # save mass matrix
 
 if __name__ == "__main__":
     main()
