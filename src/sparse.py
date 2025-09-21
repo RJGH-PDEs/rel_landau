@@ -15,9 +15,11 @@ def ind(k, ll, m, L):
     return (L+1)*(L+1)*k + lm_index(ll, m)
 
 def test_indices():
+    # selection
     k = 0
     l = 0
     m = 0
+    
     L = 2
     print(ind(k, l, m, L))
 
@@ -163,7 +165,7 @@ def sparse_op(do):
     sparse = []
     
     for dense_matrix in do:
-        print("check for symmetry: ", np.max(np.abs(dense_matrix - dense_matrix.T)))
+        # print("check for symmetry: ", np.max(np.abs(dense_matrix - dense_matrix.T)))
         sparse.append(csr_matrix(dense_matrix))
     
     print("finished computing the sparse tensor (list of sparse matrices).")

@@ -10,3 +10,6 @@
 # sparse operators
 /src/sparse_operators/
 
+# mass inverse
+/src/mass/
+
