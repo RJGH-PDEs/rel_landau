@@ -10,6 +10,7 @@ from kern import kernel
 def operator(k, f, g, test, quadrature):
     # numerical integration
     integral = 0
+
     for q in quadrature:
         # unpack quadrature 
         weight, points = unpack_quad(q)
@@ -84,13 +85,12 @@ def test():
     '''
     Choose the energy
     '''
-    energy = (1/2)*r**2       # non-relativistic
+    energy = (1/2)*r**2         # non-relativistic
     # energy = sp.sqrt(1+r**2)  # relativistic
-    # energy   = r**3             # polynomial
+    # energy   = r**3           # polynomial
 
     # test the operator
     operator_test(select, energy)
-
 
 # main function
 def main():

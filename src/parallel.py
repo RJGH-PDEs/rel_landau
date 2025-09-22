@@ -127,4 +127,3 @@ def compute_col_tensor():
 # main function
 if __name__ == "__main__":
     compute_col_tensor()
-

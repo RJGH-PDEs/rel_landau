@@ -61,15 +61,15 @@ def pieces(select, k_sym):
 
     # produce symbolic pieces
     test_sym    = gradient(basis(k, l, m))
-    print("test: ", test_sym)
-    print()
+    # print("test: ", test_sym)
+    # print()
     # the two basis functiosn will include the mu constant
     f_sym       = mu_const(k1, l1)*basis(k1, l1, m1)
-    print("f: ", f_sym)
-    print()
+    # print("f: ", f_sym)
+    # print()
     g_sym       = mu_const(k2, l2)*grad_weighted(basis(k2, l2, m2))
-    print("g: ", g_sym)
-    print()
+    # print("g: ", g_sym)
+    # print()
     
     # lambdafy
     rp, tp, pp, rq, tq, pq = sp.symbols('rp tp pp rq tq pq')

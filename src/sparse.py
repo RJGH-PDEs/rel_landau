@@ -7,21 +7,21 @@ def lm_index(ll, m):
     return ll*ll + (m + ll)
 
 # k, l, m map
-def ind(k, ll, m, L):
+def ind(k, ll, m, n):
     '''
     here, we use the convenction that 
     l is between 0 and L
     '''
-    return (L+1)*(L+1)*k + lm_index(ll, m)
+    return (n*n)*k + lm_index(ll, m)
 
 def test_indices():
     # selection
-    k = 0
-    l = 0
-    m = 0
+    k = 2
+    l = 2
+    m = 2
     
-    L = 2
-    print(ind(k, l, m, L))
+    n = 3
+    print(ind(k, l, m, n))
 
 # loads and returns data
 def load_operator(name):
@@ -101,7 +101,7 @@ def analyse(nz):
     print('number of times the sparsity rule failed: ', counter)
     
 # now just one list with simplified indeces
-def simple_index(nz, L):
+def simple_index(nz, n):
     sim_ind = []
 
     # iterate over the non-zeros
@@ -115,9 +115,9 @@ def simple_index(nz, L):
         val     = data[1]
 
         # compute simple indices
-        t_ind = ind(t[0], t[1], t[2], L)
-        f_ind = ind(f[0], f[1], f[2], L)
-        g_ind = ind(g[0], g[1], g[2], L)
+        t_ind = ind(t[0], t[1], t[2], n)
+        f_ind = ind(f[0], f[1], f[2], n)
+        g_ind = ind(g[0], g[1], g[2], n)
 
         # append 
         result = [t_ind, f_ind, g_ind, val]
@@ -147,14 +147,14 @@ def dense_op(si, n):
     for element in si:
         # extract values, should be 
         # in accordance with convention in 
-        # simple index
-        t   = element[0]
-        f   = element[1]
-        g   = element[2]
-        val = element[3] 
+        # simple_index, just
+        t   = element[0] # test
+        f   = element[1] # f
+        g   = element[2] # g
+        val = element[3] # value
         
         # insert
-        dense[t][f][g] = val # notice the index convention
+        (dense[t])[f][g] = val # notice the index convention
     
     print("finished computing the dense tensor (list of dense matrices).")
     return dense
@@ -173,8 +173,7 @@ def sparse_op(do):
 
 # main funtion
 def main():
-    n = 3
-    L = n - 1       # max value l can take?
+    n   = 3
     tol = 0.0001    # tolerance for the nonzeros
 
     file_name = 'results/test.pkl'
@@ -184,11 +183,10 @@ def main():
     nz = non_zeros(op, tol)         # extract non zeros
     analyse(nz)                     # analyse sparsity 
     
-    si = simple_index(nz, L)        # with simple index
+    si = simple_index(nz, n)        # with simple index
     do = dense_op(si, n)            # dense operator
     so = sparse_op(do)              # sparse operator
     
-   
     # compute the size of the sparse operator
     print('sparse operator length: ', len(so))
 
@@ -205,4 +203,4 @@ def main():
     
 # execute main funtion
 if __name__ == "__main__":
-    main()
+    test_indices()

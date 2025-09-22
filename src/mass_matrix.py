@@ -131,7 +131,7 @@ def save_inv_mass():
     m_inv = np.linalg.inv(m)
 
     # check that these are inverses
-    print(np.dot(m, m_inv))
+    # print(np.dot(m, m_inv))
 
     # save full quadrature
     with open('./mass/mass.pkl', 'wb') as file:

@@ -155,7 +155,7 @@ def unpack_quadrature(quad):
     w_p = quad[0][1]
 
     # angular quadrature
-    ang_p   =  quad[1][0]
+    ang_p   = quad[1][0]
     ang_w_p = quad[1][1]
 
     # special radial quadrature
@@ -239,11 +239,15 @@ def quadrature():
     # empty list
     tensorized = []
 
-    for radial in lag:
+    # in p
+    for radial_p in lag:
         for ang_p in leb:
-            for ang_q in leb:
-                for radial_q in lag:
-                    tensorized.append([radial, ang_p, radial_q, ang_q]) # this is important, need to keep track order for unpacking
+    
+            # in q
+            for radial_q in lag:
+                for ang_q in leb:
+
+                    tensorized.append([radial_p, ang_p, radial_q, ang_q]) # this is important, need to keep track order for unpacking
 
     return tensorized
 
