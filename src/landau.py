@@ -66,19 +66,19 @@ def test():
     r = sp.symbols('r')
 
     # test function
-    k = 1
-    l = 1
-    m = 1
+    k = 2
+    l = 2
+    m = 2
     
     # f
-    k1 = 0
+    k1 = 1
     l1 = 1
-    m1 = 1
+    m1 = -1
     
     # g
-    k2 = 0
-    l2 = 0
-    m2 = 0
+    k2 = 1
+    l2 = 1
+    m2 = -1
 
     select = [[k,l,m],[k1,l1,m1],[k2,l2,m2]]
 

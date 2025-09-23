@@ -33,7 +33,8 @@ def test():
     print()
     
     # change to non-equilibrium
-    f[9] = 1 # this should be the equilibrium
+    f[0] = 0
+    f[3] = 1 # this should be the equilibrium
     print("non-equilibrium f: ")
     print(f)
     print()

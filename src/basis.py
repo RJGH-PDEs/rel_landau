@@ -50,7 +50,7 @@ def basis(k, l, m):
         sphr = sphr*sp.sin(abs(m)*p)
 
     # include spherical harmonic constant
-    sphr = sphr*spher_const(l,m)
+    sphr = sphr#*spher_const(l,m)
 
     # Radial part
     radial = 1

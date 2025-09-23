@@ -74,8 +74,8 @@ def coefficient(select, quad):
 # test a coefficient
 def coeff_test():
     # select
-    test   = [2, 1, 0]
-    basis  = [1, 0, 0]
+    test   = [0, 1, 1]
+    basis  = [0, 1, 1]
     select = [test, basis]
     
     # obtain the mass quadrature
@@ -89,7 +89,6 @@ def coeff_test():
 def mass_matrix(n):
     # number of degrees of freedom, max value "l" can take
     N = n**3
-    L = n - 1
 
     # obtain the mass quadrature
     quad = load_mass_quad()
@@ -113,8 +112,8 @@ def mass_matrix(n):
                             select = [test, basis]
                             
                             # indices
-                            i = ind(k, l, m, L)     # test 
-                            j = ind(k1, l1, m1, L)  # trial
+                            i = ind(k, l, m, n)     # test 
+                            j = ind(k1, l1, m1, n)  # trial
                             M[i][j] = coefficient(select, quad)
  
     return M
@@ -134,14 +133,15 @@ def save_inv_mass():
     # print(np.dot(m, m_inv))
 
     # save full quadrature
-    with open('./mass/mass.pkl', 'wb') as file:
+    with open('./mass/mass_inv.pkl', 'wb') as file:
         pickle.dump(m_inv, file)
 
     print("mass inverse has been saved.")
  
 # The main function
 def main():
-    save_inv_mass() # save mass matrix
+    coeff_test()
+    # save_inv_mass() # save mass matrix
 
 if __name__ == "__main__":
     main()
