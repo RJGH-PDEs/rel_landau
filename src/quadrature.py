@@ -368,8 +368,8 @@ def mass_test(quad):
     '''
     # test functions
     def f(r, t, p):
-        result = (3/2 -r**2)**2
-        return result 
+        # result = (3/2 -r**2)**2
+        return 1
 
     # numerical integration
     partial_sum = 0

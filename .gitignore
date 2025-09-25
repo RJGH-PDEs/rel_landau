@@ -1,4 +1,4 @@
-# other pycache
+# pycache
 /src/__pycache__/
 
 # results
@@ -13,3 +13,7 @@
 # mass inverse
 /src/mass/
 
+# plotting
+/plot/coeff/
+/plot/figures/
+/plot/__pycache__/
