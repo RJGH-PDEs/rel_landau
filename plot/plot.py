@@ -3,9 +3,21 @@ import numpy as np
 from lc import linear_comb
 import pickle
 
+'''
+flags
+'''
+# time 
+time = 900
 # flag to save the figure
 save = True
+# either to use hard-coded coefficients, or open file
+hard_coded_coeff = False
+# show the plot, or just save it
+show = False
 
+'''
+end of flags
+'''
 # generate cartesian points
 n = 100
 x = np.linspace(-5, 5, n)
@@ -59,10 +71,6 @@ print(p)
 # will store the function
 f = np.zeros(n)
 
-# either to use hard-coded coefficients
-# or open a file
-hard_coded_coeff = False
-
 if hard_coded_coeff: 
     # coefficients
     coeff = np.zeros(27)
@@ -71,8 +79,6 @@ if hard_coded_coeff:
     coeff[9] = 0
     plt_name = "hard-coded coefficients"
 else: 
-    # open the result
-    time = 0
     file_name = "coeff/" + str(time) + ".pkl"
     with open(file_name, 'rb') as file:
         coeff = pickle.load(file)
@@ -89,12 +95,20 @@ plt.title(plt_name)
 plt.xlabel('x')
 plt.ylabel('y')
 plt.grid(True)
+   
+# show it
+if show:
+    plt.show()
 
+# save it
 if save:
     # Save the figure
     if hard_coded_coeff:
         figure_name = "./figures/hardcoded.png"
     else:
         figure_name = "./figures/" + str(time) + ".png"
+    
     plt.savefig(figure_name)
-    plt.show()
+    print("plot ", figure_name, " has been saved.")
+    
+

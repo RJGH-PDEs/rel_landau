@@ -37,6 +37,8 @@ def save_sparse_op(name, operator):
     with open(name, 'wb') as file:
         pickle.dump(operator, file)
 
+    print("saved the sparse operator as ", name)
+
 # extracts non-zero entries
 def non_zeros(operator, tol):
     '''
@@ -203,4 +205,4 @@ def main():
     
 # execute main funtion
 if __name__ == "__main__":
-    test_indices()
+    main()

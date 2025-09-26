@@ -140,8 +140,8 @@ def save_inv_mass():
  
 # The main function
 def main():
-    coeff_test()
-    # save_inv_mass() # save mass matrix
+    # coeff_test()
+    save_inv_mass() # save mass matrix
 
 if __name__ == "__main__":
     main()

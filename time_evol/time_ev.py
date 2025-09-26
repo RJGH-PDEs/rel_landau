@@ -3,12 +3,25 @@ import pickle
 from bilinear import landau
 from bilinear import update
 
+# save flag
+save = False
+
+# save function
+def save_coeff(i, coeff):
+    # location for saving coefficients
+    coeff_location = "../plot/coeff/"
+    
+    # name 
+    name = coeff_location + str(i) + ".pkl"
+
+    # save it for plotting
+    with open(name, 'wb') as file:
+        pickle.dump(f, file)
+
 # tau
 tau = 0.0001
 # number of iterations
-NUM_ITERATIONS = 100000
-# location for saving coefficients
-coeff_location = "../plot/coeff/"
+NUM_ITERATIONS = 10000
 
 # open mass matrix and operator tensor
 with open('../src/mass/mass.pkl', 'rb') as file:
@@ -24,12 +37,9 @@ f[0] = 1
 f[1] = 0.1
 f[9] = -0.6
 
-# save it for plotting
-name = coeff_location + "0.pkl"
-with open(name, 'wb') as file:
-    pickle.dump(f, file)
+# save initial condition
+save_coeff(0, f)
 
-'''
 # temporary variable
 result = np.zeros(27)
 
@@ -43,20 +53,21 @@ for i in range(1, NUM_ITERATIONS):
     landau(so, f, result)
     # apply the inverse of the matrix
     next = f + tau*(mi@result)
-
+    
     # update
     update(f, next)
 
+    # save it every few steps
+    if i%100 == 0 and save:
+        save_coeff(i, f)
+
+'''
+check status of final 
+state.
+'''
 print("f: ")
 print(f)
-
-# pickle it
-name = str(NUM_ITERATIONS) + ".pkl"
-
-with open(name, 'wb') as file:
-    pickle.dump(f, file)
 
 landau(so, f, result)
 print("Operator on f: ")
 print(result)
-'''
