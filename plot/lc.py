@@ -1,6 +1,17 @@
 # import numpy as np
 from test_func import test
-import pickle
+
+# l and m map
+def lm_index(ll, m): 
+    return ll*ll + (m + ll)
+
+# k, l, m map
+def ind(k, ll, m, n):
+    '''
+    here, we use the convenction that 
+    l is between 0 and L
+    '''
+    return (n*n)*k + lm_index(ll, m)
 
 def linear_comb(coefficients, r, t, p):
     # max k, l, m
@@ -9,15 +20,12 @@ def linear_comb(coefficients, r, t, p):
     # partial result
     result = 0
 
-    # counter 
-    i = 0
 
     for k in range(0,n):
         for l in range(0, n):
             for m in range(-l, l+1):
-                # print([k, l, m] , i)
-                result = result + coefficients[i]*test(k, l, m, r, t, p)
-                i = i + 1
+                # print([k, l, m], ind(k, l, m, n))
+                result = result + coefficients[ind(k, l, m, n)]*test(k, l, m, r, t, p)
 
     return result
 

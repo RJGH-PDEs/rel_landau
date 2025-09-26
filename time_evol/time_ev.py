@@ -1,18 +1,20 @@
 import numpy as np
 import pickle
-from bilinear_operator import landau
-from bilinear_operator import update
+from bilinear import landau
+from bilinear import update
 
 # tau
-tau = 0.00001
+tau = 0.0001
 # number of iterations
 NUM_ITERATIONS = 100000
+# location for saving coefficients
+coeff_location = "../plot/coeff/"
 
 # open mass matrix and operator tensor
-with open('mass_inverse.pkl', 'rb') as file:
+with open('../src/mass/mass.pkl', 'rb') as file:
     # mass inverse
     mi = pickle.load(file)
-with open('sparse_operator.pkl', 'rb') as file:
+with open('../src/sparse_operators/test.pkl', 'rb') as file:
     # sparse operator
     so = pickle.load(file)
 
@@ -22,7 +24,12 @@ f[0] = 1
 f[1] = 0.1
 f[9] = -0.6
 
+# save it for plotting
+name = coeff_location + "0.pkl"
+with open(name, 'wb') as file:
+    pickle.dump(f, file)
 
+'''
 # temporary variable
 result = np.zeros(27)
 
@@ -52,3 +59,4 @@ with open(name, 'wb') as file:
 landau(so, f, result)
 print("Operator on f: ")
 print(result)
+'''

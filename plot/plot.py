@@ -59,37 +59,42 @@ print(p)
 # will store the function
 f = np.zeros(n)
 
-# coefficients
-# coeff = np.zeros(27)
-# coeff[0] = 1
-# coeff[1] = 0.1
-# coeff[9] = -0.6
+# either to use hard-coded coefficients
+# or open a file
+hard_coded_coeff = False
 
-# open the result
-time = 9000
-file_name = "coeff/" + str(time) + ".pkl"
-# file_name = "1.pkl"
+if hard_coded_coeff: 
+    # coefficients
+    coeff = np.zeros(27)
+    coeff[0] = 1
+    coeff[1] = 0
+    coeff[9] = 0
+    plt_name = "hard-coded coefficients"
+else: 
+    # open the result
+    time = 0
+    file_name = "coeff/" + str(time) + ".pkl"
+    with open(file_name, 'rb') as file:
+        coeff = pickle.load(file)
+    plt_name = 'Solution at after ' + str(time) + ' iterations' 
 
-with open(file_name, 'rb') as file:
-    data = pickle.load(file)
-
-# print(data)
 # counter
-i = 0
-for point in r:
-    func_val = linear_comb(data, r[i], t[i], p[i])
+for i in range(n):
+    func_val = linear_comb(coeff, r[i], t[i], p[i])
     f[i] = np.exp((-r[i]**2)/2)*func_val
-    i = i + 1
 
 # Create the plot
 plt.plot(x, f, marker='o')  # marker='o' will put points at each (x, y)
-plt.title('Solution at after ' + str(time) + ' iterations')
+plt.title(plt_name)
 plt.xlabel('x')
 plt.ylabel('y')
 plt.grid(True)
 
 if save:
     # Save the figure
-    figure_name = "./figures/" + str(time) + ".png"
+    if hard_coded_coeff:
+        figure_name = "./figures/hardcoded.png"
+    else:
+        figure_name = "./figures/" + str(time) + ".png"
     plt.savefig(figure_name)
-    # plt.show()
+    plt.show()

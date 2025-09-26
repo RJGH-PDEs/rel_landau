@@ -64,10 +64,10 @@ def pieces(select, k_sym):
     # print("test: ", test_sym)
     # print()
     # the two basis functiosn will include the mu constant
-    f_sym       = basis(k1, l1, m1)#*mu_const(k1, l1)
+    f_sym       = basis(k1, l1, m1)*mu_const(k1, l1)
     # print("f: ", f_sym)
     # print()
-    g_sym       = grad_weighted(basis(k2, l2, m2))#*mu_const(k2, l2)
+    g_sym       = grad_weighted(basis(k2, l2, m2))*mu_const(k2, l2)
     # print("g: ", g_sym)
     # print()
     

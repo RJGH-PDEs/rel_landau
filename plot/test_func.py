@@ -85,8 +85,6 @@ def test(k, l, m, r, theta ,phi):
     """
     The test function
     """
-    result = 0
-
     result = azimuth(m, phi)            # azimunth:     phi
     # print('azimuth (phi): ', azimuth(m, phi))
 
