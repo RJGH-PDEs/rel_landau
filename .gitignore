@@ -13,6 +13,9 @@
 # mass inverse
 /src/mass/
 
+# time evolution
+/time_evol/__pycache__/
+
 # plotting
 /plot/coeff/
 /plot/figures/
