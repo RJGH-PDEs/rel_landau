@@ -178,7 +178,7 @@ def main():
     n   = 3
     tol = 0.0001    # tolerance for the nonzeros
 
-    file_name = 'results/test.pkl'
+    file_name = 'results/rel_non_cons.pkl'
     
     print("analyzing for file with name: ", file_name)
     op = load_operator(file_name)   # load operator pkl
@@ -198,7 +198,7 @@ def main():
         print(slice.nnz)
  
     # save it 
-    sparse_name = "sparse_operators/test.pkl" 
+    sparse_name = "sparse_operators/rel_non_cons.pkl" 
     save_sparse_op(sparse_name, so)
 
     return 0

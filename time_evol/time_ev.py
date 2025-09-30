@@ -4,7 +4,7 @@ from bilinear import landau
 from bilinear import update
 
 # save flag
-save = False
+save = True
 
 # save function
 def save_coeff(i, coeff):
@@ -21,13 +21,13 @@ def save_coeff(i, coeff):
 # tau
 tau = 0.0001
 # number of iterations
-NUM_ITERATIONS = 10000
+NUM_ITERATIONS = 100
 
 # open mass matrix and operator tensor
 with open('../src/mass/mass.pkl', 'rb') as file:
     # mass inverse
     mi = pickle.load(file)
-with open('../src/sparse_operators/test.pkl', 'rb') as file:
+with open('../src/sparse_operators/rel_non_cons.pkl', 'rb') as file:
     # sparse operator
     so = pickle.load(file)
 
@@ -58,7 +58,7 @@ for i in range(1, NUM_ITERATIONS):
     update(f, next)
 
     # save it every few steps
-    if i%100 == 0 and save:
+    if i%10 == 0 and save:
         save_coeff(i, f)
 
 '''

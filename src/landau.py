@@ -40,7 +40,7 @@ def operator_parallel(select, shared_data):
     return [select, result]
 
 # test the operator
-def operator_test(select, energy):
+def operator_test(select, energy, rel):
     # load the quadrature
     quad = load_quad()
 
@@ -49,7 +49,8 @@ def operator_test(select, energy):
     print()
 
     # produce the symbolic pieces
-    sym_kern        = kernel(energy)
+    verbose         = True
+    sym_kern        = kernel(energy, verbose, rel)
     # print(sym_kern)
     k, f, g, test   = pieces(select, sym_kern)
 
@@ -62,35 +63,38 @@ def operator_test(select, energy):
 
 # The main function
 def test():
-    # radial symbol
-    r = sp.symbols('r')
-
-    # test function
+   # test function
     k = 2
     l = 2
     m = 2
     
     # f
-    k1 = 1
-    l1 = 1
-    m1 = -1
+    k1 = 2
+    l1 = 2
+    m1 = 2
     
     # g
-    k2 = 1
-    l2 = 1
-    m2 = -1
+    k2 = 2
+    l2 = 2
+    m2 = 0
 
     select = [[k,l,m],[k1,l1,m1],[k2,l2,m2]]
 
     '''
     Choose the energy
     '''
-    energy = (1/2)*r**2         # non-relativistic
-    # energy = sp.sqrt(1+r**2)  # relativistic
-    # energy   = r**3           # polynomial
+    # radial symbol
+    r = sp.symbols('r')
+ 
+    # relativistic flag
+    rel = True
+    if rel:
+        energy = sp.sqrt(1+r**2)    # relativistic
+    else:
+        energy = (1/2)*r**2         # non-relativistic
 
     # test the operator
-    operator_test(select, energy)
+    operator_test(select, energy, rel)
 
 # main function
 def main():

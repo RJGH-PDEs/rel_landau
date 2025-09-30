@@ -7,7 +7,7 @@ import pickle
 flags
 '''
 # time 
-time = 900
+time = 1000
 # flag to save the figure
 save = True
 # either to use hard-coded coefficients, or open file
@@ -19,7 +19,7 @@ show = False
 end of flags
 '''
 # generate cartesian points
-n = 100
+n = 40
 x = np.linspace(-5, 5, n)
 y = np.zeros(n)
 z = np.zeros(n)

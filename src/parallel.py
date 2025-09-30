@@ -87,27 +87,36 @@ def parallel_setup(n, energy, rel):
 
 def compute_col_tensor():
     # relativistic flag
-    rel = False
+    rel     = True
+    # conservative flag
+    cons    = False
 
     # select the degrees of freedom
-    n = 3
+    n       = 3
 
     # where the result will be saved
-    file_name = 'results/test.pkl'
+    file_name = 'results/rel_non_cons.pkl'
     
     '''
     Choose the energy
     '''
     # energy = sp.sqrt(1+r**2)  # relativistic
-    # energy   = r**3             # polynomial
+    # energy = r**3             # polynomial
     # energy = 1 + 0.43991322*r**2 - 0.0338162*r**4
     # energy = 1.0 + 0.37438846*r**2 + 0.01891801*r**4 + 0.00058631*r**6 - (6.71019908e-06)*r**8
     # energy = 1.0 + 0.35854196*r**2 - 0.01482466*r**4  + 0.00028524*r**6
 
     # load the energy
     if rel:
-        with open('../cheby/eh.pkl', 'rb') as f:
-            energy = pickle.load(f)
+        if cons: 
+            # open the numerical energy
+            with open('../cheby/eh.pkl', 'rb') as f:
+                energy = pickle.load(f)
+        else: 
+            # radial symbol
+            r = sp.symbols('r')
+            energy = sp.sqrt(1+r**2)  # relativistic
+
     else:
         # radial symbol
         r = sp.symbols('r')
@@ -122,7 +131,7 @@ def compute_col_tensor():
     # save the result
     with open(file_name, 'wb') as file:
         pickle.dump(result, file)
-        print("the result has been saved")
+        print("the result has been saved at ", file_name)
 
 # main function
 if __name__ == "__main__":
