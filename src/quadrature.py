@@ -200,7 +200,7 @@ def quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 8
+    n_laguerre  = 9
     n_lebedev   = 7
 
     # extract the coefficients
@@ -256,8 +256,8 @@ def mass_quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 7
-    n_lebedev   = 5
+    n_laguerre  = 9
+    n_lebedev   = 7
 
     # extract the coefficients
     alpha = 1/2

@@ -6,6 +6,7 @@ import sympy as sp
 # import pieces from operator
 from kern import kernel
 from landau import operator_parallel, load_quad
+from sparse_rules import andrea, cai
 
 # create iterable
 def create_param_iterable(n):
@@ -37,10 +38,10 @@ def create_param_iterable(n):
                                         e    = [k,l,m] == [1,0,0] 
                                         
                                         flag = mass or px or py or pz or e
-
-                                        if not flag:
+                                        
+                                        if not flag and (andrea(select) and cai(select)):
                                             param.append(select)
-
+    print("number of coefficients to compute: ", len(param))
     return param
 
 # parallel iterator
@@ -95,7 +96,7 @@ def compute_col_tensor():
     n       = 3
 
     # where the result will be saved
-    file_name = 'results/rel_non_cons.pkl'
+    file_name = 'results/sparsity_test.pkl'
     
     '''
     Choose the energy
@@ -136,3 +137,5 @@ def compute_col_tensor():
 # main function
 if __name__ == "__main__":
     compute_col_tensor()
+    # n = 3
+    # create_param_iterable(n)

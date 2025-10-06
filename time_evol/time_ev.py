@@ -21,7 +21,7 @@ def save_coeff(i, coeff):
 # tau
 tau = 0.0001
 # number of iterations
-NUM_ITERATIONS = 100
+NUM_ITERATIONS = 10000
 
 # open mass matrix and operator tensor
 with open('../src/mass/mass.pkl', 'rb') as file:
@@ -58,7 +58,7 @@ for i in range(1, NUM_ITERATIONS):
     update(f, next)
 
     # save it every few steps
-    if i%10 == 0 and save:
+    if i%100 == 0 and save:
         save_coeff(i, f)
 
 '''
