@@ -25,8 +25,8 @@ def mu_const(k, l):
     Goes in front of only the basis functions, not the test functions
     '''
     # compute the constant    
-    result = 2 * factorial(k)
-    result = result/gamma(k + l + 3/2)
+    result = factorial(k)
+    result = result/gamma(k + 2*l + 3)
     result = np.sqrt(result)
     
     # return result
@@ -57,9 +57,9 @@ def basis(k, l, m):
     
     if k > 0:
         # alpha
-        a = l + 1/2
+        a = 2*(l + 1)
  
-        radial = sp.assoc_laguerre(k, a, r**2)
+        radial = sp.assoc_laguerre(k, a, r)
 
     radial = radial*r**l
 
@@ -106,14 +106,15 @@ def grad_weighted(f):
 
     # add the exponential
     # g = sp.exp(-r**2)*f
-    g = sp.exp((-r**2)/2)*f
-
+    # g = sp.exp((-r**2)/2)*f
+    g = sp.exp((-r)/2)*f
+    
     # take the gradient
     grad = gradient(g)
 
     # take away the Gaussian weight
     # grad = sp.simplify(grad/sp.exp((-r**2)) # should not have any gradient
-    grad = sp.simplify(grad/sp.exp((-r**2)/2)) 
+    grad = sp.simplify(grad/sp.exp((-r)/2)) 
     
     return grad
 

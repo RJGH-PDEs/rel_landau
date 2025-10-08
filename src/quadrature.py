@@ -204,18 +204,18 @@ def quadrature():
     n_lebedev   = 7
 
     # extract the coefficients
-    alpha = 1/2
+    alpha = 2
     x, w_r = roots_genlaguerre(n_laguerre, alpha, False)
     lag = []
     for point, weight in zip(x, w_r):
         '''
         we change variables. This is 
         needed because we are integrating 
-        with the weight e^(-r^2/2), in 
+        with the weight e^(-r/2), in 
         spherical coordinates.
         '''
-        new_point  = np.sqrt(2*point)
-        new_weight = weight*np.sqrt(2)
+        new_point  = 2*point
+        new_weight = 8*weight
 
         # append
         lag.append([new_point, new_weight])
@@ -260,7 +260,7 @@ def mass_quadrature():
     n_lebedev   = 7
 
     # extract the coefficients
-    alpha = 1/2
+    alpha = 2
     x, w_r = roots_genlaguerre(n_laguerre, alpha, False)
     lag = []
     for point, weight in zip(x, w_r):
@@ -270,8 +270,8 @@ def mass_quadrature():
         with the weight e^(-r^2/2), in 
         spherical coordinates.
         '''
-        new_point  = np.sqrt(2*point)
-        new_weight = weight*np.sqrt(2)
+        new_point  = 2*point
+        new_weight = 8*weight
 
         # append
         lag.append([new_point, new_weight])
