@@ -39,7 +39,7 @@ def create_param_iterable(n):
                                         
                                         flag = mass or px or py or pz or e
                                         
-                                        if not flag and (andrea(select) and cai(select)):
+                                        if not flag:# and (andrea(select) and cai(select)):
                                             param.append(select)
     print("number of coefficients to compute: ", len(param))
     return param
@@ -69,7 +69,7 @@ def parallel_setup(n, energy, rel):
     print("quadrature size: ", len(quad))
 
     # produce the symbolic kernel, dependent on the energy
-    verbose = False
+    verbose = True
     kern    = kernel(energy, verbose, rel)
 
     # define the shared data
@@ -96,7 +96,7 @@ def compute_col_tensor():
     n       = 3
 
     # where the result will be saved
-    file_name = 'results/sparsity_test.pkl'
+    file_name = 'results/new_basis.pkl'
     
     '''
     Choose the energy
@@ -117,6 +117,7 @@ def compute_col_tensor():
             # radial symbol
             r = sp.symbols('r')
             energy = sp.sqrt(1+r**2)  # relativistic
+            print("relativistic, non conservative")
 
     else:
         # radial symbol

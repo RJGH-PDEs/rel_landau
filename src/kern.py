@@ -51,6 +51,12 @@ def kernel(energy, verbose=False, rel=False):
         # Relativistic part
         z = (ep+eq)/2
         cross = z.cross(u)
+        
+        if verbose:
+            print()
+            print("new part for rel: ", cross*cross.T)
+            print()
+
         kern = kern - cross*cross.T
         # altern = sp.simplify(altern)
     

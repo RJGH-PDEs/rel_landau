@@ -17,8 +17,8 @@ def ind(k, ll, m, n):
 def test_indices():
     # selection
     k = 2
-    l = 2
-    m = 2
+    l = 0
+    m = 0
     
     n = 3
     print(ind(k, l, m, n))
@@ -178,7 +178,7 @@ def main():
     n   = 3
     tol = 0.0001    # tolerance for the nonzeros
 
-    file_name = 'results/rel_non_cons.pkl'
+    file_name = 'results/new_basis.pkl'
     
     print("analyzing for file with name: ", file_name)
     op = load_operator(file_name)   # load operator pkl
@@ -198,11 +198,12 @@ def main():
         print(slice.nnz)
  
     # save it 
-    sparse_name = "sparse_operators/rel_non_cons.pkl" 
+    sparse_name = "sparse_operators/sparse_new_basis.pkl" 
     save_sparse_op(sparse_name, so)
 
     return 0
     
 # execute main funtion
 if __name__ == "__main__":
+    # test_indices()
     main()

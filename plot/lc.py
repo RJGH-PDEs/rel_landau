@@ -1,5 +1,5 @@
 # import numpy as np
-from test_func import test
+from test_func import test, sym
 
 # l and m map
 def lm_index(ll, m): 
@@ -26,6 +26,21 @@ def linear_comb(coefficients, r, t, p):
             for m in range(-l, l+1):
                 # print([k, l, m], ind(k, l, m, n))
                 result = result + coefficients[ind(k, l, m, n)]*test(k, l, m, r, t, p)
+
+    return result
+
+def sym_linear_comb(coefficients):
+    # max k, l, m
+    n = 3
+
+    # partial result
+    result = 0
+
+    for k in range(0,n):
+        for l in range(0, n):
+            for m in range(-l, l+1):
+                # print([k, l, m], ind(k, l, m, n))
+                result = result + coefficients[ind(k, l, m, n)]*sym(k, l, m)
 
     return result
 

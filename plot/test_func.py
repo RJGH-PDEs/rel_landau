@@ -13,8 +13,8 @@ def mu_const(k, l):
     Goes in front of only the basis functions, not the test functions
     '''
     # compute the constant    
-    result = 2 * factorial(k)
-    result = result/gamma(k + l + 3/2)
+    result = factorial(k)
+    result = result/gamma(k + 2*l + 3)
     result = np.sqrt(result)
     
     # return result
@@ -46,9 +46,9 @@ def Phi(l, k, r):
     result  = 0
 
     # Parametes for the Laguerre
-    x       = r**2
+    x       = r
     n       = k
-    alpha   = l + 1/2
+    alpha   = 2*(l + 1)
 
     result = genlaguerre(n, alpha)(x)*(r**(l))
 
@@ -106,17 +106,14 @@ def test(k, l, m, r, theta ,phi):
 
     return result
 
-# symbolic test function (without the exponential weight)
-def sym_test(k, l, m, rad, the, phi):
-    result = 0
-
+def sym(k, l, m):
     # symbols
     r = sp.symbols('r')
     t = sp.symbols('t')
     p = sp.symbols('p')
 
     # alpha
-    a = l + 1/2
+    a = 2*(l + 1)
 
     # Spherical harmonic
     sphr = sp.simplify(sp.assoc_legendre(l,abs(m), sp.cos(t)))
@@ -130,22 +127,62 @@ def sym_test(k, l, m, rad, the, phi):
     # Radial part
     radial = 1
     if k > 0:
-        radial = sp.assoc_laguerre(k, a, r**2)
+        radial = sp.assoc_laguerre(k, a, r)
     radial = radial*r**l
 
     # the test function
     f = sphr*radial
 
-    # print the test function
-    print("test function: ", f)
+    # multiply by spherical constant 
+    f = f*spher_const(l, m)
+    
+    # multiply by basis constant
+    f = f*mu_const(k, l) # the other constant
+    
+    return f
+
+# symbolic test function (without the exponential weight)
+def sym_test(k, l, m, rad, the, phi):
+    result = 0
+
+    # symbols
+    r = sp.symbols('r')
+    t = sp.symbols('t')
+    p = sp.symbols('p')
+
+    # alpha
+    a = 2*(l + 1)
+
+    # Spherical harmonic
+    sphr = sp.simplify(sp.assoc_legendre(l,abs(m), sp.cos(t)))
+    sphr = sp.refine(sphr, sp.Q.positive(sp.sin(t)))
+
+    if m >= 0:
+        sphr = sphr*sp.cos(m*p)
+    else:
+        sphr = sphr*sp.sin(abs(m)*p)
+
+    # Radial part
+    radial = 1
+    if k > 0:
+        radial = sp.assoc_laguerre(k, a, r)
+    radial = radial*r**l
+
+    # the test function
+    f = sphr*radial
+
+    # multiply by spherical constant 
+    f = f*spher_const(l, m)
+    
+    # multiply by basis constant
+    f = f*mu_const(k, l) # the other constant
+    
+    print("symbolic function ", f)
 
     # evaluation at point
     point = {"r":rad,"t":the,"p":phi}
     result = f.subs(point)
 
-    # multiply by constant 
-    result = result*spher_const(l, m)
-    
     # return
     return result
 
@@ -168,10 +205,10 @@ def f_integrated(select, rp, tp, pp, rq, tq, pq):
 # The main function
 def main():
     # Parameters
-    k = 1
-    l = 1
-    m = 1
-    
+    k = 2
+    l = 0
+    m = 0    
+
     # Coefficients
     r = 5
     theta = np.pi/5

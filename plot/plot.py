@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from lc import linear_comb
+from lc import linear_comb, sym_linear_comb
 import pickle
 
 '''
 flags
 '''
 # time 
-time = 1000
+time = 10
 # flag to save the figure
 save = True
 # either to use hard-coded coefficients, or open file
@@ -19,8 +19,8 @@ show = False
 end of flags
 '''
 # generate cartesian points
-n = 40
-x = np.linspace(-5, 5, n)
+n = 30
+x = np.linspace(-15, 15, n)
 y = np.zeros(n)
 z = np.zeros(n)
 
@@ -74,9 +74,10 @@ f = np.zeros(n)
 if hard_coded_coeff: 
     # coefficients
     coeff = np.zeros(27)
-    coeff[0] = 1
-    coeff[1] = 0
-    coeff[9] = 0
+    coeff[0]    = 5.12
+    coeff[9]    = 0.176
+    coeff[18]   = -0.983
+
     plt_name = "hard-coded coefficients"
 else: 
     file_name = "coeff/" + str(time) + ".pkl"
@@ -84,10 +85,15 @@ else:
         coeff = pickle.load(file)
     plt_name = 'Solution at after ' + str(time) + ' iterations' 
 
+
+# symbolic
+# slc = sym_linear_comb(coeff)
+# print(slc)
+
 # counter
 for i in range(n):
     func_val = linear_comb(coeff, r[i], t[i], p[i])
-    f[i] = np.exp((-r[i]**2)/2)*func_val
+    f[i] = np.exp((-r[i])/2)*func_val
 
 # Create the plot
 plt.plot(x, f, marker='o')  # marker='o' will put points at each (x, y)

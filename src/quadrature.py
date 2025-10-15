@@ -26,7 +26,7 @@ def theta(x, y, z):
 def phi(x, y):
     r = np.sqrt(x**2 + y**2)
 
-    if r == 0:
+    if  r == 0:
         return 0
     elif y == 0:
         return np.arccos(x/r) # new discovery, this might be wrong
@@ -200,7 +200,7 @@ def quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 9
+    n_laguerre  = 5
     n_lebedev   = 7
 
     # extract the coefficients
@@ -256,7 +256,7 @@ def mass_quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 9
+    n_laguerre  = 5
     n_lebedev   = 7
 
     # extract the coefficients
@@ -267,7 +267,7 @@ def mass_quadrature():
         '''
         we change variables. This is 
         needed because we are integrating 
-        with the weight e^(-r^2/2), in 
+        with the weight e^(-r/2), in 
         spherical coordinates.
         '''
         new_point  = 2*point

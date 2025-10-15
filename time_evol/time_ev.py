@@ -19,26 +19,26 @@ def save_coeff(i, coeff):
         pickle.dump(f, file)
 
 # tau
-tau = 0.0001
+tau = 0.00001
 # number of iterations
-NUM_ITERATIONS = 10000
-
-# open mass matrix and operator tensor
-with open('../src/mass/mass.pkl', 'rb') as file:
-    # mass inverse
-    mi = pickle.load(file)
-with open('../src/sparse_operators/rel_non_cons.pkl', 'rb') as file:
-    # sparse operator
-    so = pickle.load(file)
+NUM_ITERATIONS = 10
 
 # initial condition
 f = np.zeros(27)
-f[0] = 1
-f[1] = 0.1
-f[9] = -0.6
+f[0] = 43.6
+f[9] = -44.35
+f[18] = 14.7
 
 # save initial condition
 save_coeff(0, f)
+
+# open mass matrix and operator tensor
+with open('../src/mass/mass_inv.pkl', 'rb') as file:
+    # mass inverse
+    mi = pickle.load(file)
+with open('../src/sparse_operators/sparse_new_basis.pkl', 'rb') as file:
+    # sparse operator
+    so = pickle.load(file)
 
 # temporary variable
 result = np.zeros(27)
@@ -58,7 +58,7 @@ for i in range(1, NUM_ITERATIONS):
     update(f, next)
 
     # save it every few steps
-    if i%100 == 0 and save:
+    if i%1 == 0 and save:
         save_coeff(i, f)
 
 '''

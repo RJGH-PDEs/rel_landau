@@ -74,8 +74,8 @@ def coefficient(select, quad):
 # test a coefficient
 def coeff_test():
     # select
-    test   = [0, 1, 1]
-    basis  = [0, 1, 1]
+    test   = [0, 1, 0]
+    basis  = [1, 1, 0]
     select = [test, basis]
     
     # obtain the mass quadrature

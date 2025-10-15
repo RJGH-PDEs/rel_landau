@@ -58,7 +58,7 @@ def basis(k, l, m):
     if k > 0:
         # alpha
         a = 2*(l + 1)
- 
+        # note that the substitution is with r, not r^2 
         radial = sp.assoc_laguerre(k, a, r)
 
     radial = radial*r**l
