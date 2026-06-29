@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-Research code for a **Petrov-Galerkin spectral method** that computes the (relativistic and non-relativistic) **Landau collision operator**. The discretization uses spherically-defined basis functions: a generalized-Laguerre radial part times a real spherical harmonic, with a Gaussian weight. `RelLandau.pdf` holds an older copy of the derivation. This is exploratory research code, not a packaged library — expect WIP scripts, commented-out blocks, and hard-coded parameters/paths.
+Research code for a **Petrov-Galerkin spectral method** that computes the (relativistic and non-relativistic) **Landau collision operator**. The discretization uses spherically-defined basis functions: a generalized-Laguerre radial part times a real spherical harmonic, with a Gaussian weight. The authoritative derivation lives in the read-only write-up repo (see below). This is exploratory research code, not a packaged library — expect WIP scripts, commented-out blocks, and hard-coded parameters/paths.
 
 The write-up defines **two basis families**: a Gaussian-weight basis (`e^{-r²/2}`, write-up Sec. 5) and an exponential-weight basis (`e^{-r/2}`, Sec. 6). **The current code implements the Gaussian basis.** The exponential basis is the intended next direction (cf. the last commit, "will move on to different basis").
 
