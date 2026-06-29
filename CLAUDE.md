@@ -51,7 +51,6 @@ The whole system is a sequence of scripts that pass data via pickle files:
 Supporting / analysis:
 - **`cheby/ChevInt.py`** — Chebyshev-interpolates the relativistic energy `√(1+x²)` into a plain polynomial, saved as `cheby/eh.pkl`. Used as the "conservative" relativistic energy in `parallel.py`.
 - **`src/rank.py`** — tensor-train (`tntorch.cross`) low-rank analysis of the collision tensor.
-- **`mathematica/`** — `.nb` notebooks with the symbolic derivations (weak / relativistic-weak forms).
 
 ## Index and data conventions (must stay consistent across files)
 
