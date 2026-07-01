@@ -21,10 +21,11 @@ tensor `𝕊`, the weak-form assembly, time stepping, and reconstruction. Detail
    `main.tex` line 539** should be `√(2·k!/Γ(k+l+3/2))` (the `2` is in the wrong place). The
    exponential-weight `μ` (Eq. 53, line 596) is correct. Fix upstream in the paper repo (read-only
    here). See Part 2.
-2. **Λ = 1 (simplified kernel) — not a bug, but the main missing physics.** The code implements the
-   write-up's `Φ_simple` (Maxwell-molecules-like, lines 256-259): the tensor `𝕊` only, with the
-   scalar field `Λ` and its `|p−q|^{-3}` singularity omitted. Adding `Λ` is the key next step to get
-   the physically complete operator. See Part 5.
+2. **Λ = 1 (simplified kernel) — INTENTIONAL and fixed for this experiment.** The code implements
+   the write-up's `Φ_simple` (Maxwell-molecules-like, lines 256-259): the tensor `𝕊` only, with the
+   scalar field `Λ` and its `|p−q|^{-3}` singularity omitted. **This is a deliberate design choice —
+   Λ stays 1 for the remainder of this experiment; adding the full `Λ` is explicitly out of scope**
+   (extra work not wanted now). Correct as implemented. See Part 5.
 3. **Relativistic `(1,0,0)` energy-skip bug — FOUND & FIXED** (commit `eef55db`). The skip is valid
    non-relativistically but zeroed genuinely-nonzero coefficients relativistically; now conditional
    on `rel`. See Part 7.
@@ -83,13 +84,13 @@ To verify:
 - [x] Kernel (`src/kern.py`): tensor field `𝕊 = |u|²Id − u⊗u − (z×u)⊗(z×u)` matches Eqs. (10)/(196)
       exactly; energy gradient `∇E=(∂E/∂r)ê_r` = `p/E_p` (rel) / `p` (non-rel) — correct; `𝕊·u=0` by
       construction (the energy-conservation mechanism). Relativistic `(z×u)⊗(z×u)` term present.
-- [x] **⚠️ MAIN MISSING PHYSICS: scalar field Λ is NOT implemented — code computes `Φ_simple` (Λ=1).**
+- [x] **Scalar field Λ = 1 — INTENTIONAL, fixed for this experiment (not future work).**
       The code's kernel is exactly the write-up's simplified "Maxwell-molecules-like" kernel
       `Φ_simple = 𝕊(u,z)` with `Λ=1` (write-up lines 256-259), NOT the full
-      `Λ = (E_pE_q)(ρ+1)²(ρτ)^{-3/2}` (Eqs. 9/195) with its `|p−q|^{-3}` singularity. This is a
-      deliberate, write-up-sanctioned simplification (sparsity depends only on 𝕊's angular structure),
-      but means the code does NOT yet compute the physically complete Landau operator. **Adding Λ
-      (and handling its diagonal singularity in the 6D quadrature) is the key future-work item.**
+      `Λ = (E_pE_q)(ρ+1)²(ρτ)^{-3/2}` (Eqs. 9/195). This is a deliberate, write-up-sanctioned
+      simplification (and sparsity depends only on 𝕊's angular structure). **Decision: Λ stays 1 for
+      the remainder of this experiment; implementing the full Λ + its diagonal singularity is
+      explicitly out of scope.** Correct as implemented.
 - [x] Integrand & weak-form assembly (`src/integrand.py`, `src/landau.py`) vs Eq. (278):
       `result = f(p)·[∇ψ_t(q)]ᵀ·𝕊·(∇φ_i(p)−∇φ_i(q))` exactly matches the weak-form RHS with `Φ=𝕊`
       (Λ=1). Select ordering `[test i, f(p)=s, ∇g(q)=t]` correct; trial carries μ (weight in
