@@ -154,8 +154,15 @@ To verify:
       test function φ). Touches `plot/lc.py`. Deferred (semantic rename).
 - [ ] Centralize hard-coded params: `n=3`, magic `27`, `tau`, `NUM_ITERATIONS`, `tol`,
       quadrature orders (`n_laguerre=9`, `n_lebedev=7`), energy choice.
-- [ ] Centralize the inconsistent hard-coded relative output paths across stages
-      (partly addressed: producer/consumer names aligned to `rel_non_cons.pkl` + `makedirs` added).
+- [ ] **Centralized output-file naming convention** (requested for the next runs). One place that
+      builds the collision-operator filename from the run config — rel vs non-rel, conservative vs
+      not, sparse vs dense, `n`, and quadrature order — so `parallel.py` (producer) and
+      `sparse.py`/`time_ev.py` (consumers) can't drift out of sync. Partly addressed (names aligned
+      to `rel_non_cons.pkl` + `makedirs` added), but the encode-from-config scheme is not built yet.
+- [ ] Before a full run: choose quadrature degrees (`n_laguerre`, `n_lebedev`) deliberately —
+      accuracy vs the 6D cost `(n_lag·n_leb_pts)²` per coefficient. (Runs happen on a cluster.)
+- [x] `sparse` flag added to `compute_col_tensor` (`src/parallel.py`): toggles cai/andrea zero-pruning
+      (sparse) vs full dense tensor. Commit on `dev`.
 - [x] Removed dead/commented scratch blocks (commit ceeb5bd): `bilinear.py`, `lc.py`, the obsolete
       `unpack_quadrature()` in `quadrature.py`, and unused fns `energy_grad_cart`/`test_indices`/`f_integrated`.
 - [x] Comment typos fixed (commit ceeb5bd): weighet, functiosn, lambdafy, convenction, Parametes,
