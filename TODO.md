@@ -38,9 +38,27 @@ To verify:
       finite-difference reference to ~1e-11 (correct spherical-gradient formula + orthonormal basis
       vectors). `grad_weighted(f) = gradient(f) − r·f·ê_r` to ~1e-14, i.e. `∇(e^{-r²/2}f)/e^{-r²/2}`
       with the common weight factored out for the quadrature. Confirmed.
-- [ ] Kernel (`src/kern.py`): scalar field Λ = `(E_p E_q)(ρ+1)²(ρτ)^{-3/2}` vs Eq. (9);
-      tensor field `|u|²Id − u⊗u − (z×u)⊗(z×u)` vs Eq. (10); energy gradient `p/√(1+p²)` vs Sec. 2;
-      presence of the relativistic `(z×u)⊗(z×u)` term.
+- [x] Quadrature (`src/quadrature.py`): 3D radial moments exact (`∫1=(2π)^1.5`, `∫r²=3(2π)^1.5`,
+      `∫r⁴=15(2π)^1.5` — the `e^{-r²/2}·r²` measure is folded in via the `x=r²/2` change of variables,
+      lines 207-218); 6D `unpack_quad` ordering `[r_p,t_p,p_p,r_q,t_q,p_q]` + weight-product correct
+      (`∫∫1=(2π)³`, `∫∫r_p²=3(2π)³` exact). Angular orthonormality confirmed via the mass matrix.
+      The `phi` "this might be wrong" comment (`quadrature.py:32`) is a FALSE ALARM —
+      `sign(y)·arccos(x/ρ)` equals `atan2(y,x)`, correct.
+- [x] Kernel (`src/kern.py`): tensor field `𝕊 = |u|²Id − u⊗u − (z×u)⊗(z×u)` matches Eqs. (10)/(196)
+      exactly; energy gradient `∇E=(∂E/∂r)ê_r` = `p/E_p` (rel) / `p` (non-rel) — correct; `𝕊·u=0` by
+      construction (the energy-conservation mechanism). Relativistic `(z×u)⊗(z×u)` term present.
+- [x] **⚠️ MAIN MISSING PHYSICS: scalar field Λ is NOT implemented — code computes `Φ_simple` (Λ=1).**
+      The code's kernel is exactly the write-up's simplified "Maxwell-molecules-like" kernel
+      `Φ_simple = 𝕊(u,z)` with `Λ=1` (write-up lines 256-259), NOT the full
+      `Λ = (E_pE_q)(ρ+1)²(ρτ)^{-3/2}` (Eqs. 9/195) with its `|p−q|^{-3}` singularity. This is a
+      deliberate, write-up-sanctioned simplification (sparsity depends only on 𝕊's angular structure),
+      but means the code does NOT yet compute the physically complete Landau operator. **Adding Λ
+      (and handling its diagonal singularity in the 6D quadrature) is the key future-work item.**
+- [x] Integrand & weak-form assembly (`src/integrand.py`, `src/landau.py`) vs Eq. (278):
+      `result = f(p)·[∇ψ_t(q)]ᵀ·𝕊·(∇φ_i(p)−∇φ_i(q))` exactly matches the weak-form RHS with `Φ=𝕊`
+      (Λ=1). Select ordering `[test i, f(p)=s, ∇g(q)=t]` correct; trial carries μ (weight in
+      quadrature), test gradient unweighted. `landau.py` sums `weight·integrand` over the 6D
+      quadrature. Confirmed (given the Λ=1 simplification above).
 - [ ] Conservation laws: skipped basis functions `(0,0,0)`, `(0,1,·)`, `(1,0,0)`
       (`src/parallel.py:34-40`) vs Prop. 1 (mass/momentum) and Sec. 5.2 (discrete energy).
 - [x] Mass matrix (`src/mass_matrix.py`) vs Eq. (46): **matches to ~1e-13** (verified against direct
@@ -76,6 +94,6 @@ To verify:
 - [ ] Centralize the inconsistent hard-coded relative output paths across stages.
 - [ ] Remove dead/commented scratch blocks (`time_evol/bilinear.py:81-139`, `plot/lc.py:32-47`,
       `src/quadrature.py:149-191`).
-- [ ] Resolve the "this might be wrong" coordinate comments (`src/quadrature.py:32`,
-      `plot/plot.py:42`) — likely a `phi` quadrant/sign question; verify against the coordinate
-      convention in the write-up (Sec. 3.3).
+- [x] RESOLVED (verified in Part 4): the "this might be wrong" `phi` comments (`src/quadrature.py:32`,
+      `plot/plot.py:42`) are a false alarm — `sign(y)·arccos(x/ρ) == atan2(y,x)`. Safe to just delete
+      the misleading comment when cleaning.
