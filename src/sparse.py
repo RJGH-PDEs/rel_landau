@@ -2,6 +2,8 @@ import os
 import pickle
 import numpy as np
 from scipy.sparse import csr_matrix
+from naming import operator_tag
+from quadrature import N_LAGUERRE, N_LEBEDEV
 
 # l and m map
 def lm_index(ll, m): 
@@ -168,11 +170,17 @@ def sparse_op(do):
 
 # main funtion
 def main():
-    n   = 3
-    tol = 0.0001    # tolerance for the nonzeros
+    # run config -- MUST match the run that produced the results in parallel.py
+    # (these flags select which operator file to load / write via operator_tag).
+    rel     = True
+    cons    = False
+    sparse  = True
+    n       = 3
+    tol     = 0.0001    # tolerance for the nonzeros
 
-    file_name = 'results/rel_non_cons.pkl'
-    
+    tag       = operator_tag(rel, cons, sparse, n, N_LAGUERRE, N_LEBEDEV)
+    file_name = f'results/{tag}.pkl'
+
     print("analyzing for file with name: ", file_name)
     op = load_operator(file_name)   # load operator pkl
     nz = non_zeros(op, tol)         # extract non zeros
@@ -190,8 +198,8 @@ def main():
     for slice in so:
         print(slice.nnz)
  
-    # save it 
-    sparse_name = "sparse_operators/rel_non_cons.pkl" 
+    # save it (same tag, sparse_operators/ directory)
+    sparse_name = f'sparse_operators/{tag}.pkl'
     save_sparse_op(sparse_name, so)
 
     return 0

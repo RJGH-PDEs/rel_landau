@@ -8,6 +8,8 @@ import sympy as sp
 from kern import kernel
 from landau import operator_parallel, load_quad
 from sparse_rules import andrea, cai
+from naming import operator_tag
+from quadrature import N_LAGUERRE, N_LEBEDEV
 
 # create iterable
 def create_param_iterable(n, rel, sparse=True):
@@ -116,8 +118,10 @@ def compute_col_tensor():
     # select the degrees of freedom
     n       = 3
 
-    # where the result will be saved (must match the file sparse.py loads)
-    file_name = 'results/rel_non_cons.pkl'
+    # where the result will be saved. The tag is built from the run config by
+    # naming.operator_tag so the producer and sparse.py/time_ev.py stay in sync.
+    tag       = operator_tag(rel, cons, sparse, n, N_LAGUERRE, N_LEBEDEV)
+    file_name = f'results/{tag}.pkl'
     
     '''
     Choose the energy

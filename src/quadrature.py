@@ -3,9 +3,15 @@ import os
 import pickle
 import numpy as np
 
-# integration 
+# integration
 from scipy.special import roots_genlaguerre
 from pylebedev import PyLebedev
+
+# Quadrature order (single source of truth: used both to build the rule and to
+# name the collision-operator files via naming.operator_tag). Choose carefully
+# before a full run -- accuracy vs. the 6D cost.
+N_LAGUERRE = 9   # radial (generalized-Laguerre) nodes
+N_LEBEDEV  = 7   # Lebedev order
 
 '''
 Spherical coordinates
@@ -158,8 +164,8 @@ def quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 9
-    n_lebedev   = 7
+    n_laguerre  = N_LAGUERRE
+    n_lebedev   = N_LEBEDEV
 
     # extract the coefficients
     alpha = 1/2
@@ -214,8 +220,8 @@ def mass_quadrature():
     '''
     choose the integration order here
     '''
-    n_laguerre  = 9
-    n_lebedev   = 7
+    n_laguerre  = N_LAGUERRE
+    n_lebedev   = N_LEBEDEV
 
     # extract the coefficients
     alpha = 1/2

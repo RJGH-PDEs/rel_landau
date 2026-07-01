@@ -1,8 +1,13 @@
 import os
+import sys
 import numpy as np
 import pickle
 from bilinear import landau
 from bilinear import update
+# reach the shared naming helper + quadrature-order constants in ../src
+sys.path.insert(0, '../src')
+from naming import operator_tag
+from quadrature import N_LAGUERRE, N_LEBEDEV
 
 # save flag
 save = True
@@ -25,11 +30,19 @@ tau = 0.0001
 # number of iterations
 NUM_ITERATIONS = 10000
 
+# run config -- MUST match the run that produced the operator (selects which
+# sparse-operator file to load, via operator_tag).
+rel    = True
+cons   = False
+sparse = True
+n      = 3
+tag    = operator_tag(rel, cons, sparse, n, N_LAGUERRE, N_LEBEDEV)
+
 # open mass matrix and operator tensor
 with open('../src/mass/mass_inv.pkl', 'rb') as file:
     # mass inverse
     mi = pickle.load(file)
-with open('../src/sparse_operators/rel_non_cons.pkl', 'rb') as file:
+with open(f'../src/sparse_operators/{tag}.pkl', 'rb') as file:
     # sparse operator
     so = pickle.load(file)
 
