@@ -39,7 +39,7 @@ def phi(x, y):
     if r == 0:
         return 0
     elif y == 0:
-        return np.arccos(x/r) # new discovery, this might be wrong
+        return np.arccos(x/r)
     else:
         return np.sign(y)*np.arccos(x/r)
     

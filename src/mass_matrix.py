@@ -41,11 +41,11 @@ def pieces(select):
     test_sym    = basis(ki, li, mi)
     # print("test  function: ", test_sym)
 
-    # the two basis functiosn will include the mu constant
+    # the two basis functions will include the mu constant
     f_sym       = basis(kj, lj, mj)*mu_const(kj, lj)
     # print("basis function: ", f_sym) 
 
-    # lambdafy
+    # lambdify
     r, t, p = sp.symbols('r t p')
 
     # numpy pieces
@@ -62,9 +62,9 @@ def coefficient(select, quad):
 
     # numerical integration
     partial_sum = 0
-    for quad in quad:
-        # unpack the quadrature 
-        weight, points = unpack_mass_quad(quad)
+    for q in quad:
+        # unpack the quadrature
+        weight, points = unpack_mass_quad(q)
         # perform the partial sum
 
         sample = integrand(f, test, points)

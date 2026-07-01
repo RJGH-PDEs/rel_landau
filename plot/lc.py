@@ -8,7 +8,7 @@ def lm_index(ll, m):
 # k, l, m map
 def ind(k, ll, m, n):
     '''
-    here, we use the convenction that 
+    here, we use the convention that
     l is between 0 and L
     '''
     return (n*n)*k + lm_index(ll, m)
@@ -29,19 +29,3 @@ def linear_comb(coefficients, r, t, p):
 
     return result
 
-'''
-# open the result
-with open('result.pkl', 'rb') as file:
-    data = pickle.load(file)
-
-i = 0
-for s in data:
-    print(i, data[i])
-    i = i + 1
-
-# test it
-coeff = np.zeros(27)
-coeff[0] = 1
-
-linear_comb(coeff, 1, 0, 0)
-'''

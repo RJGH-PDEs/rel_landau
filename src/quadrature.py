@@ -30,7 +30,7 @@ def phi(x, y):
     if r == 0:
         return 0
     elif y == 0:
-        return np.arccos(x/r) # new discovery, this might be wrong
+        return np.arccos(x/r)
     else:
         return np.sign(y)*np.arccos(x/r)
 
@@ -147,49 +147,6 @@ def unpack_mass_quad(quad):
     pts = [r, t, p]
     return weight, pts
  
-'''
-this is an older version
-'''
-def unpack_quadrature(quad):
-    # radial quadrature
-    r_p = quad[0][0]
-    w_p = quad[0][1]
-
-    # angular quadrature
-    ang_p   = quad[1][0]
-    ang_w_p = quad[1][1]
-
-    # special radial quadrature
-    r_q = quad[2][0]
-    w_q = quad[2][1]
-    
-    # angular quadrature for u
-    ang_q   = quad[3][0]
-    ang_w_q = quad[3][1] 
-
-    # cartesian quadrature point on the sphere
-    x_p = ang_p[0]
-    y_p = ang_p[1]
-    z_p = ang_p[2]
-
-    x_q = ang_q[0]
-    y_q = ang_q[1]
-    z_q = ang_q[2]
-
-    # exctract angular variables
-    t_p = theta(x_p, y_p, z_p)
-    p_p = phi(x_p, y_p)
-
-    t_q = theta(x_q, y_q, z_q)
-    p_q = phi(x_q, y_q)
-
-    # full weight 
-    weight = w_p*ang_w_p*w_q*ang_w_q 
-    
-    '''
-    Now we need to deal how to return this 
-    '''
-    return [weight, r_p, t_p, p_p, r_q, t_q, p_q]
 
 '''
 On this file we try to create a list that
@@ -376,9 +333,9 @@ def mass_test(quad):
 
     # numerical integration
     partial_sum = 0
-    for quad in quad:
-        # unpack the quadrature 
-        weight, points = unpack_mass_quad(quad)
+    for q in quad:
+        # unpack the quadrature
+        weight, points = unpack_mass_quad(q)
         r, t, p = points # this is the convention
         # perform the partial sum
         sample = f(r, t, p)

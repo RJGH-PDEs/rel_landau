@@ -54,10 +54,10 @@ for i in range(1, NUM_ITERATIONS):
     # apply the landau operator
     landau(so, f, result)
     # apply the inverse of the matrix
-    next = f + tau*(mi@result)
-    
+    f_next = f + tau*(mi@result)
+
     # update
-    update(f, next)
+    update(f, f_next)
 
     # save it every few steps
     if i%100 == 0 and save:

@@ -10,19 +10,10 @@ def lm_index(ll, m):
 # k, l, m map
 def ind(k, ll, m, n):
     '''
-    here, we use the convenction that 
+    here, we use the convention that
     l is between 0 and L
     '''
     return (n*n)*k + lm_index(ll, m)
-
-def test_indices():
-    # selection
-    k = 2
-    l = 2
-    m = 2
-    
-    n = 3
-    print(ind(k, l, m, n))
 
 # loads and returns data
 def load_operator(name):
@@ -81,10 +72,10 @@ def analyse(nz):
         m_2     = f2[2]
 
         test    = np.abs(m_test)
-        sum     = np.abs(m_1 + m_2)
+        msum    = np.abs(m_1 + m_2)
         diff    = np.abs(m_1 - m_2)
-        
-        Caiflag = (test - sum == 0) or (test - diff == 0)
+
+        Caiflag = (test - msum == 0) or (test - diff == 0)
 
         if not Caiflag:
             counter = counter + 1

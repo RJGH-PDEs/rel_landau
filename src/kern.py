@@ -73,27 +73,6 @@ def kernel(energy, verbose=False, rel=False):
 
     return kern
 
-# cartesian energy grad
-def energy_grad_cart():
-    # Symbols
-    x = sp.symbols('x')
-    y = sp.symbols('y')
-    z = sp.symbols('z')
-
-    # norm an unit vector
-    pos = sp.Matrix([x, y, z])
-    r   = sp.sqrt(pos.dot(pos))
-    print(r)
-    
-    # energy 
-    e = sp.sqrt(1+r**2)
-
-    # energy gradient
-    eg = sp.Matrix([sp.diff(e, x), sp.diff(e, y), sp.diff(e,z)])
-    eg = sp.simplify(eg)
-
-    return eg
-
 # A test
 def test():
     # energy 

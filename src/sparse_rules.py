@@ -38,11 +38,11 @@ def cai(select):
     m2 = select[2][2]
 
     # rule 
-    test = np.abs(m) 
-    sum  = np.abs(m1 + m2)
+    test = np.abs(m)
+    msum = np.abs(m1 + m2)
     diff = np.abs(m1 - m2)
 
-    return (test - sum == 0) or (test - diff == 0)
+    return (test - msum == 0) or (test - diff == 0)
 
 def andrea_test(select):
     print("select: ", select)

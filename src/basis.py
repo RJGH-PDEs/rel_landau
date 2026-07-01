@@ -135,7 +135,7 @@ def test():
     print()
 
     # print weighted gradient
-    print("weighet gradient: ", grad_weighted(f))
+    print("weighted gradient: ", grad_weighted(f))
     print()
 
 # The main function

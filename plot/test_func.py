@@ -45,7 +45,7 @@ def Phi(l, k, r):
     """
     result  = 0
 
-    # Parametes for the Laguerre
+    # Parameters for the Laguerre
     x       = r**2
     n       = k
     alpha   = l + 1/2
@@ -57,7 +57,7 @@ def Phi(l, k, r):
 # Legendre polynomial
 def Leg(m, l, t):
     """
-    Computes the Laguerre polynomial evaluated
+    Computes the associated Legendre polynomial evaluated
     at x = cos(theta)
     """
     result = 0
@@ -85,7 +85,7 @@ def test(k, l, m, r, theta ,phi):
     """
     The test function
     """
-    result = azimuth(m, phi)            # azimunth:     phi
+    result = azimuth(m, phi)            # azimuth:      phi
     # print('azimuth (phi): ', azimuth(m, phi))
 
     result = result*Leg(m, l, theta)    # Legendre:     theta
@@ -148,22 +148,6 @@ def sym_test(k, l, m, rad, the, phi):
     
     # return
     return result
-
-# function to be integrated
-def f_integrated(select, rp, tp, pp, rq, tq, pq):
-    # parameters for first function
-    k_1 = select[0]
-    l_1 = select[1]
-    m_1 = select[2]
-    # parameters for second function
-    k_2 = select[3]
-    l_2 = select[4]
-    m_2 = select[5]
-
-    # print(k_1, l_1, m_1, k_2, l_2, m_2)
-
-    # return sym_test(k_1, l_1, m_1, rp, tp, pp)*sym_test(k_2, l_2, m_2, rq, tq, pq)
-    return test(k_1, l_1, m_1, rp, tp, pp)*test(k_2, l_2, m_2, rq, tq, pq)
 
 # The main function
 def main():

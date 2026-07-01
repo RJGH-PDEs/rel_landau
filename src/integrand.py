@@ -21,7 +21,7 @@ def integrand(k, f, g, gt, points):
     '''
     the evaluation points, 
     just be careful about this ordering. 
-    The order comes from unpack_quadrature.
+    The order comes from unpack_quad.
     points = [r_p, t_p, p_p, r_q, t_q, p_q]
     '''
     # p
@@ -63,7 +63,7 @@ def pieces(select, k_sym):
     test_sym    = gradient(basis(k, l, m))
     # print("test: ", test_sym)
     # print()
-    # the two basis functiosn will include the mu constant
+    # the two basis functions will include the mu constant
     f_sym       = basis(k1, l1, m1)*mu_const(k1, l1)
     # print("f: ", f_sym)
     # print()
@@ -71,7 +71,7 @@ def pieces(select, k_sym):
     # print("g: ", g_sym)
     # print()
     
-    # lambdafy
+    # lambdify
     rp, tp, pp, rq, tq, pq = sp.symbols('rp tp pp rq tq pq')
     r, t, p = sp.symbols('r t p')
 
