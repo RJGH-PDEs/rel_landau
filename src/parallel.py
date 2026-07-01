@@ -1,4 +1,5 @@
 import multiprocessing
+import os
 import time
 import pickle
 import sympy as sp
@@ -9,7 +10,7 @@ from landau import operator_parallel, load_quad
 from sparse_rules import andrea, cai
 
 # create iterable
-def create_param_iterable(n):
+def create_param_iterable(n, rel):
     param = []
 
     # iterate for all test functions
@@ -31,12 +32,18 @@ def create_param_iterable(n):
                                         select = [[k,l,m], [k1,l1,m1], [k2,l2,m2]]
 
                                         # skip conservation laws
+                                        # mass & momentum vanish for ANY kernel (write-up Prop. 1,
+                                        # eq. 455): grad(phi_p)-grad(phi_q)=0 for constant/linear phi.
                                         mass = [k,l,m] == [0,0,0]
                                         px   = [k,l,m] == [0,1,-1]
                                         py   = [k,l,m] == [0,1,0]
                                         pz   = [k,l,m] == [0,1,1]
-                                        e    = [k,l,m] == [1,0,0] 
-                                        
+                                        # energy (1,0,0) ~ r^2 is conserved ONLY non-relativistically
+                                        # (then u = grad(E_p)-grad(E_q) proportional to p-q, killed by
+                                        # S). Relativistically u = p/E_p - q/E_q, so (1,0,0) is NOT
+                                        # conserved by Phi_simple and must be computed. See TODO Part 7.
+                                        e    = ([k,l,m] == [1,0,0]) and (not rel)
+
                                         flag = mass or px or py or pz or e
                                         
                                         if not flag and (andrea(select) and cai(select)):
@@ -45,14 +52,15 @@ def create_param_iterable(n):
     return param
 
 # parallel iterator
-def parallel(sd, n):
+def parallel(sd, n, rel):
     '''
     Arguments:
         - sd: the shared data. [quadrature, kernel]
         - n:  corresponds to max k, l
+        - rel: relativistic flag (controls the energy conservation-law skip)
     '''
     # obtain the list of parameters
-    params = create_param_iterable(n)
+    params = create_param_iterable(n, rel)
 
     # Create a pool of workers
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
@@ -77,7 +85,7 @@ def parallel_setup(n, energy, rel):
                 
     # compute it and time it
     start = time.time()
-    r = parallel(sd, n)
+    r = parallel(sd, n, rel)
     end = time.time()
 
     # Calculate elapsed time
@@ -95,8 +103,8 @@ def compute_col_tensor():
     # select the degrees of freedom
     n       = 3
 
-    # where the result will be saved
-    file_name = 'results/sparsity_test.pkl'
+    # where the result will be saved (must match the file sparse.py loads)
+    file_name = 'results/rel_non_cons.pkl'
     
     '''
     Choose the energy
@@ -130,6 +138,7 @@ def compute_col_tensor():
     print(result)
 
     # save the result
+    os.makedirs('results', exist_ok=True)
     with open(file_name, 'wb') as file:
         pickle.dump(result, file)
         print("the result has been saved at ", file_name)

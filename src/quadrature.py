@@ -1,4 +1,5 @@
 # imports
+import os
 import pickle
 import numpy as np
 
@@ -308,6 +309,7 @@ def save_quadrature():
     tensorized = quadrature()
 
     # save full quadrature
+    os.makedirs('./quadrature', exist_ok=True)
     with open('./quadrature/quadrature.pkl', 'wb') as file:
         pickle.dump(tensorized, file)
 
@@ -319,6 +321,7 @@ def save_mass_quadrature():
     tensorized = mass_quadrature()
     
     # save full quadrature
+    os.makedirs('./quadrature', exist_ok=True)
     with open('./quadrature/mass_quadrature.pkl', 'wb') as file:
         pickle.dump(tensorized, file)
 

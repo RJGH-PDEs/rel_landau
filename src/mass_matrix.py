@@ -1,4 +1,5 @@
 # numpy, sympy
+import os
 import numpy as np
 import sympy as sp
 import pickle
@@ -132,7 +133,8 @@ def save_inv_mass():
     # check that these are inverses
     # print(np.dot(m, m_inv))
 
-    # save full quadrature
+    # save the mass inverse
+    os.makedirs('./mass', exist_ok=True)
     with open('./mass/mass_inv.pkl', 'wb') as file:
         pickle.dump(m_inv, file)
 

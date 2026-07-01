@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pickle
 from bilinear import landau
@@ -10,13 +11,14 @@ save = True
 def save_coeff(i, coeff):
     # location for saving coefficients
     coeff_location = "../plot/coeff/"
-    
-    # name 
+    os.makedirs(coeff_location, exist_ok=True)
+
+    # name
     name = coeff_location + str(i) + ".pkl"
 
     # save it for plotting
     with open(name, 'wb') as file:
-        pickle.dump(f, file)
+        pickle.dump(coeff, file)
 
 # tau
 tau = 0.0001
@@ -24,7 +26,7 @@ tau = 0.0001
 NUM_ITERATIONS = 10000
 
 # open mass matrix and operator tensor
-with open('../src/mass/mass.pkl', 'rb') as file:
+with open('../src/mass/mass_inv.pkl', 'rb') as file:
     # mass inverse
     mi = pickle.load(file)
 with open('../src/sparse_operators/rel_non_cons.pkl', 'rb') as file:

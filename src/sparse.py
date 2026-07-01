@@ -1,4 +1,5 @@
-import pickle 
+import os
+import pickle
 import numpy as np
 from scipy.sparse import csr_matrix
 
@@ -32,8 +33,9 @@ def load_operator(name):
     # return
     return data
 
-# save operator 
+# save operator
 def save_sparse_op(name, operator):
+    os.makedirs(os.path.dirname(name), exist_ok=True)
     with open(name, 'wb') as file:
         pickle.dump(operator, file)
 
