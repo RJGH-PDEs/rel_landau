@@ -154,11 +154,12 @@ To verify:
       test function φ). Touches `plot/lc.py`. Deferred (semantic rename).
 - [ ] Centralize hard-coded params: `n=3`, magic `27`, `tau`, `NUM_ITERATIONS`, `tol`,
       quadrature orders (`n_laguerre=9`, `n_lebedev=7`), energy choice.
-- [ ] **Centralized output-file naming convention** (requested for the next runs). One place that
-      builds the collision-operator filename from the run config — rel vs non-rel, conservative vs
-      not, sparse vs dense, `n`, and quadrature order — so `parallel.py` (producer) and
-      `sparse.py`/`time_ev.py` (consumers) can't drift out of sync. Partly addressed (names aligned
-      to `rel_non_cons.pkl` + `makedirs` added), but the encode-from-config scheme is not built yet.
+- [x] **Centralized output-file naming convention** — DONE (`src/naming.py` `operator_tag`). Builds
+      the filename from run config (rel/cons/sparse/n + quadrature order), e.g.
+      `rel_noncons_sparse_n3_q9x7`; each caller prepends its dir. Quadrature order is a single source
+      of truth via `quadrature.N_LAGUERRE`/`N_LEBEDEV`. CAVEAT: each consumer (`sparse.py`,
+      `time_ev.py`) sets its own `rel/cons/sparse/n` flags and MUST match the producer's run — the
+      name encodes config, there's no manifest. (A metadata sidecar could remove that coupling later.)
 - [ ] Before a full run: choose quadrature degrees (`n_laguerre`, `n_lebedev`) deliberately —
       accuracy vs the 6D cost `(n_lag·n_leb_pts)²` per coefficient. (Runs happen on a cluster.)
 - [x] `sparse` flag added to `compute_col_tensor` (`src/parallel.py`): toggles cai/andrea zero-pruning
