@@ -134,14 +134,14 @@ To verify:
 
 ## Track B — Code cleanup
 
-### Critical (correctness bugs)
-- [ ] Path mismatch: `time_evol/time_ev.py:27` reads `../src/mass/mass.pkl`, but
-      `src/mass_matrix.py:136` writes `mass_inv.pkl` → FileNotFoundError.
-- [ ] `save_coeff()` (`time_evol/time_ev.py:10-19`) dumps the global `f` instead of its `coeff` arg.
+### Critical (correctness bugs) — DONE (commit eef55db)
+- [x] Path mismatch fixed: `time_ev.py` now reads `mass_inv.pkl`.
+- [x] `save_coeff()` now dumps its `coeff` argument.
 
 ### High
-- [ ] Shadowed builtins: `sum`/`min` (`src/sparse.py:82,95`, `src/sparse_rules.py:42`);
-      `for quad in quad:` (`src/quadrature.py:376`, `src/mass_matrix.py:64`).
+- [x] Shadowed builtins fixed (commit ceeb5bd): local `sum`→`msum` (`sparse.py`, `sparse_rules.py`),
+      `for quad in quad`→`for q in quad` (`quadrature.py`, `mass_matrix.py`), `next`→`f_next`
+      (`time_ev.py`). (Note: `m = min(l1,l2)` in `sparse.py` uses the builtin correctly — not a shadow.)
 - [ ] Fragile bare-import + run-from-own-directory pattern across `src/`, `time_evol/`, `plot/`.
       Consider a real package (`__init__.py` / `pyproject.toml`) + a central paths/config module.
 - [ ] No tests, no `requirements.txt`, no package structure.
@@ -150,11 +150,15 @@ To verify:
 - [ ] Consolidate duplicated functions: `mu_const`/`spher_const` (`src/basis.py` ↔
       `plot/test_func.py`), `ind`/`lm_index` (`src/sparse.py` ↔ `plot/lc.py`),
       `radius`/`theta`/`phi` (`src/quadrature.py` ↔ `plot/plot.py`).
+- [ ] Rename the misnamed `test()` in `plot/test_func.py` (it's the unweighted trial with μ, not the
+      test function φ). Touches `plot/lc.py`. Deferred (semantic rename).
 - [ ] Centralize hard-coded params: `n=3`, magic `27`, `tau`, `NUM_ITERATIONS`, `tol`,
       quadrature orders (`n_laguerre=9`, `n_lebedev=7`), energy choice.
-- [ ] Centralize the inconsistent hard-coded relative output paths across stages.
-- [ ] Remove dead/commented scratch blocks (`time_evol/bilinear.py:81-139`, `plot/lc.py:32-47`,
-      `src/quadrature.py:149-191`).
-- [x] RESOLVED (verified in Part 4): the "this might be wrong" `phi` comments (`src/quadrature.py:32`,
-      `plot/plot.py:42`) are a false alarm — `sign(y)·arccos(x/ρ) == atan2(y,x)`. Safe to just delete
-      the misleading comment when cleaning.
+- [ ] Centralize the inconsistent hard-coded relative output paths across stages
+      (partly addressed: producer/consumer names aligned to `rel_non_cons.pkl` + `makedirs` added).
+- [x] Removed dead/commented scratch blocks (commit ceeb5bd): `bilinear.py`, `lc.py`, the obsolete
+      `unpack_quadrature()` in `quadrature.py`, and unused fns `energy_grad_cart`/`test_indices`/`f_integrated`.
+- [x] Comment typos fixed (commit ceeb5bd): weighet, functiosn, lambdafy, convenction, Parametes,
+      azimunth; `Leg()` docstring Laguerre→Legendre.
+- [x] RESOLVED (verified in Part 4): the "this might be wrong" `phi` comments were a false alarm
+      (`sign(y)·arccos(x/ρ) == atan2(y,x)`); comment removed in cleanup.
