@@ -35,7 +35,7 @@ cd plot      && python plot.py
 
 The output directories consumed/produced by the pipeline (`src/quadrature/`, `src/results/`, `src/mass/`, `src/sparse_operators/`, `plot/coeff/`, `plot/figures/`) are **gitignored** and may not exist on a fresh checkout — create them before running, since `pickle.dump` will not create parent dirs.
 
-Dependencies (install manually): `numpy`, `scipy`, `sympy`, `matplotlib`, `pylebedev`, `torch`, `tntorch`.
+Dependencies (install manually): `numpy`, `scipy`, `sympy`, `matplotlib`, `pylebedev`.
 
 ## Pipeline (run in this order)
 
@@ -50,7 +50,6 @@ The whole system is a sequence of scripts that pass data via pickle files:
 
 Supporting / analysis:
 - **`cheby/ChevInt.py`** — Chebyshev-interpolates the relativistic energy `√(1+x²)` into a plain polynomial, saved as `cheby/eh.pkl`. Used as the "conservative" relativistic energy in `parallel.py`.
-- **`src/rank.py`** — tensor-train (`tntorch.cross`) low-rank analysis of the collision tensor.
 
 ## Index and data conventions (must stay consistent across files)
 
