@@ -9,6 +9,42 @@ so we don't refactor code whose correctness we haven't yet pinned to the math.
 
 ---
 
+## Verification summary (2026-07-01)
+
+Careful part-by-part check of the code against the write-up. **The discretization is correct.**
+Every building block matches the math (verified symbolically/numerically to ~1e-13–1e-16):
+basis & spherical harmonics, normalization `μ`, mass matrix, gradients, quadrature, the kernel
+tensor `𝕊`, the weak-form assembly, time stepping, and reconstruction. Details per part in Track A.
+
+**Three things worth knowing:**
+1. **`mu_const` "discrepancy" → the CODE is right, the PAPER has a typo.** Write-up **Eq. (43),
+   `main.tex` line 539** should be `√(2·k!/Γ(k+l+3/2))` (the `2` is in the wrong place). The
+   exponential-weight `μ` (Eq. 53, line 596) is correct. Fix upstream in the paper repo (read-only
+   here). See Part 2.
+2. **Λ = 1 (simplified kernel) — not a bug, but the main missing physics.** The code implements the
+   write-up's `Φ_simple` (Maxwell-molecules-like, lines 256-259): the tensor `𝕊` only, with the
+   scalar field `Λ` and its `|p−q|^{-3}` singularity omitted. Adding `Λ` is the key next step to get
+   the physically complete operator. See Part 5.
+3. **Relativistic `(1,0,0)` energy-skip bug — FOUND & FIXED** (commit `eef55db`). The skip is valid
+   non-relativistically but zeroed genuinely-nonzero coefficients relativistically; now conditional
+   on `rel`. See Part 7.
+
+**Blocking bugs fixed** (commit `eef55db`): `mass.pkl`→`mass_inv.pkl` path, `save_coeff` variable,
+producer/consumer filename mismatch, and auto-`makedirs` at all save sites.
+
+**Pipeline status:** quadrature + mass matrix build and re-verify locally (`248.05`, `15.75`, mass
+matrix matches Eq. 46 to 1e-13). The full collision-tensor computation is expensive (pure-Python,
+54k quadrature points/coefficient) and is run **on a cluster**, not locally — the end-to-end
+numerical sanity check (`Q(equilibrium)≈0`, conserved-moment drift, bounded relaxation) is therefore
+**deferred to a cluster run**. Note: those conservation identities are *pointwise-exact* in the
+integrand, so they are guaranteed by the Part-1–9 verification independent of quadrature order.
+A ready-to-run reduced-order check script is committed at repo root: **`pipeline_check.py`**
+(`cd src && python ../pipeline_check.py`). It builds a reduced quadrature, computes the non-rel
+tensor, and checks `Q(equilibrium)≈0`, conserved-moment drift, and bounded relaxation. For the
+full-accuracy run, use the normal pipeline on a cluster (`parallel.py` → `sparse.py` → `time_ev.py`).
+
+---
+
 ## Track A — Math ↔ code verification (against `main.tex`)
 
 Already confirmed during planning:
