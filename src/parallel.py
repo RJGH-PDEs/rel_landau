@@ -10,7 +10,7 @@ from landau import operator_parallel, load_quad
 from sparse_rules import andrea, cai
 
 # create iterable
-def create_param_iterable(n, rel):
+def create_param_iterable(n, rel, sparse=True):
     param = []
 
     # iterate for all test functions
@@ -45,22 +45,33 @@ def create_param_iterable(n, rel):
                                         e    = ([k,l,m] == [1,0,0]) and (not rel)
 
                                         flag = mass or px or py or pz or e
-                                        
-                                        if not flag and (andrea(select) and cai(select)):
+
+                                        # sparse=True: prune provably-zero entries with the
+                                        # directional (cai) and anisotropic (andrea) selection
+                                        # rules. sparse=False: compute the full (dense) tensor,
+                                        # e.g. to validate the rules via sparse.py's analyse().
+                                        if sparse:
+                                            keep = (not flag) and andrea(select) and cai(select)
+                                        else:
+                                            keep = not flag
+
+                                        if keep:
                                             param.append(select)
-    print("number of coefficients to compute: ", len(param))
+    print("number of coefficients to compute: ", len(param), "(sparse)" if sparse else "(dense)")
     return param
 
 # parallel iterator
-def parallel(sd, n, rel):
+def parallel(sd, n, rel, sparse=True):
     '''
     Arguments:
         - sd: the shared data. [quadrature, kernel]
         - n:  corresponds to max k, l
         - rel: relativistic flag (controls the energy conservation-law skip)
+        - sparse: if True, prune provably-zero entries with the cai/andrea rules;
+                  if False, compute the full dense tensor.
     '''
     # obtain the list of parameters
-    params = create_param_iterable(n, rel)
+    params = create_param_iterable(n, rel, sparse)
 
     # Create a pool of workers
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
@@ -71,7 +82,7 @@ def parallel(sd, n, rel):
     return results
 
 # produce collision matrix
-def parallel_setup(n, energy, rel):
+def parallel_setup(n, energy, rel, sparse=True):
     # load quadrature
     quad = load_quad()
     print("quadrature size: ", len(quad))
@@ -85,7 +96,7 @@ def parallel_setup(n, energy, rel):
                 
     # compute it and time it
     start = time.time()
-    r = parallel(sd, n, rel)
+    r = parallel(sd, n, rel, sparse)
     end = time.time()
 
     # Calculate elapsed time
@@ -99,6 +110,8 @@ def compute_col_tensor():
     rel     = True
     # conservative flag
     cons    = False
+    # sparse flag: True -> prune zeros with the cai/andrea rules; False -> full dense tensor
+    sparse  = True
 
     # select the degrees of freedom
     n       = 3
@@ -132,7 +145,7 @@ def compute_col_tensor():
         energy = (1/2)*r**2
 
     # compute the tensor, results will contain it
-    result = parallel_setup(n, energy, rel)
+    result = parallel_setup(n, energy, rel, sparse)
 
     # print the result
     print(result)
