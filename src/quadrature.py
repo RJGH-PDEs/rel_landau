@@ -271,10 +271,13 @@ def save_quadrature():
     # obtain the quadrature rule
     tensorized = quadrature()
 
-    # save full quadrature
+    # Save the points AND the order they were built with. Tagging the file lets
+    # the operator filename (naming.operator_tag) reflect the ACTUAL order used,
+    # even if N_LAGUERRE/N_LEBEDEV are changed later without regenerating this file.
     os.makedirs('./quadrature', exist_ok=True)
+    payload = {'points': tensorized, 'n_lag': N_LAGUERRE, 'n_leb': N_LEBEDEV}
     with open('./quadrature/quadrature.pkl', 'wb') as file:
-        pickle.dump(tensorized, file)
+        pickle.dump(payload, file)
 
     print("operator quadrature has been saved.")
    
@@ -290,11 +293,22 @@ def save_mass_quadrature():
 
     print("mass quadrature has been saved.")
  
-# loads the quadrature
+# loads the quadrature (returns the list of quadrature points)
 def load_quad():
     with open('./quadrature/quadrature.pkl', 'rb') as file:
         data = pickle.load(file)
-    return data
+    # new format: dict {'points', 'n_lag', 'n_leb'}; old format: bare points list
+    return data['points'] if isinstance(data, dict) else data
+
+# returns the (n_lag, n_leb) order the operator quadrature was actually built with.
+# `path` lets callers in other directories (e.g. time_evol/) point at ../src/...
+def load_quad_order(path='./quadrature/quadrature.pkl'):
+    with open(path, 'rb') as file:
+        data = pickle.load(file)
+    if isinstance(data, dict):
+        return data['n_lag'], data['n_leb']
+    # old bare-list pickle predates order-tagging: fall back to current constants
+    return N_LAGUERRE, N_LEBEDEV
 
 def load_mass_quad():
     with open('./quadrature/mass_quadrature.pkl', 'rb') as file:

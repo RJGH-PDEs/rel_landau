@@ -7,7 +7,7 @@ from bilinear import update
 # reach the shared naming helper + quadrature-order constants in ../src
 sys.path.insert(0, '../src')
 from naming import operator_tag
-from quadrature import N_LAGUERRE, N_LEBEDEV
+from quadrature import load_quad_order
 
 # save flag
 save = True
@@ -36,7 +36,9 @@ rel    = True
 cons   = False
 sparse = True
 n      = 3
-tag    = operator_tag(rel, cons, sparse, n, N_LAGUERRE, N_LEBEDEV)
+# read the actual quadrature order from the operator quadrature file in ../src
+n_lag, n_leb = load_quad_order('../src/quadrature/quadrature.pkl')
+tag    = operator_tag(rel, cons, sparse, n, n_lag, n_leb)
 
 # open mass matrix and operator tensor
 with open('../src/mass/mass_inv.pkl', 'rb') as file:

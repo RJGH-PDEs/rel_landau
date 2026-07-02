@@ -9,7 +9,7 @@ from kern import kernel
 from landau import operator_parallel, load_quad
 from sparse_rules import andrea, cai
 from naming import operator_tag
-from quadrature import N_LAGUERRE, N_LEBEDEV
+from quadrature import load_quad_order
 
 # create iterable
 def create_param_iterable(n, rel, sparse=True):
@@ -120,7 +120,10 @@ def compute_col_tensor():
 
     # where the result will be saved. The tag is built from the run config by
     # naming.operator_tag so the producer and sparse.py/time_ev.py stay in sync.
-    tag       = operator_tag(rel, cons, sparse, n, N_LAGUERRE, N_LEBEDEV)
+    # The quadrature order is read from the actual quadrature file, not the
+    # constants, so the name can't misreport the order that was used.
+    n_lag, n_leb = load_quad_order()
+    tag       = operator_tag(rel, cons, sparse, n, n_lag, n_leb)
     file_name = f'results/{tag}.pkl'
     
     '''

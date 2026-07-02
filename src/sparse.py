@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 from scipy.sparse import csr_matrix
 from naming import operator_tag
-from quadrature import N_LAGUERRE, N_LEBEDEV
+from quadrature import load_quad_order
 
 # l and m map
 def lm_index(ll, m): 
@@ -178,7 +178,8 @@ def main():
     n       = 3
     tol     = 0.0001    # tolerance for the nonzeros
 
-    tag       = operator_tag(rel, cons, sparse, n, N_LAGUERRE, N_LEBEDEV)
+    n_lag, n_leb = load_quad_order()
+    tag       = operator_tag(rel, cons, sparse, n, n_lag, n_leb)
     file_name = f'results/{tag}.pkl'
 
     print("analyzing for file with name: ", file_name)
