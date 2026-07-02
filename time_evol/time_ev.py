@@ -6,7 +6,7 @@ from bilinear import landau
 from bilinear import update
 # reach the shared naming helper + quadrature-order constants in ../src
 sys.path.insert(0, '../src')
-from naming import operator_tag
+from naming import operator_tag, mass_tag, load_with_meta
 from quadrature import load_quad_order
 
 # save flag
@@ -30,8 +30,8 @@ tau = 0.0001
 # number of iterations
 NUM_ITERATIONS = 10000
 
-# run config -- MUST match the run that produced the operator (selects which
-# sparse-operator file to load, via operator_tag).
+# run config -- used to LOCATE the sparse-operator file (via operator_tag). The
+# authoritative n / config come from the loaded artifact's metadata, not here.
 rel    = True
 cons   = False
 sparse = True
@@ -40,16 +40,17 @@ n      = 3
 n_lag, n_leb = load_quad_order('../src/quadrature/quadrature.pkl')
 tag    = operator_tag(rel, cons, sparse, n, n_lag, n_leb)
 
-# open mass matrix and operator tensor
-with open('../src/mass/mass_inv.pkl', 'rb') as file:
-    # mass inverse
-    mi = pickle.load(file)
-with open(f'../src/sparse_operators/{tag}.pkl', 'rb') as file:
-    # sparse operator
-    so = pickle.load(file)
+# open the sparse operator tensor + its metadata
+so, meta = load_with_meta(f'../src/sparse_operators/{tag}.pkl')
+n = meta['n']                       # authoritative dof from the artifact
 
-# initial condition
-f = np.zeros(27)
+# open the mass matrix that MATCHES this run's mass quadrature and n
+m_lag, m_leb = load_quad_order('../src/quadrature/mass_quadrature.pkl')
+mi, mass_meta = load_with_meta(f'../src/mass/{mass_tag(n, m_lag, m_leb)}.pkl')
+assert mass_meta['n'] == n, f"mass matrix n={mass_meta['n']} != operator n={n}"
+
+# initial condition (state vector has size n**3)
+f = np.zeros(n**3)
 f[0] = 1
 f[1] = 0.1
 f[9] = -0.6
@@ -58,7 +59,7 @@ f[9] = -0.6
 save_coeff(0, f)
 
 # temporary variable
-result = np.zeros(27)
+result = np.zeros(n**3)
 
 # time evolution
 for i in range(1, NUM_ITERATIONS):

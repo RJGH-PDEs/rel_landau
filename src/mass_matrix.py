@@ -1,14 +1,14 @@
 # numpy, sympy
-import os
 import numpy as np
 import sympy as sp
-import pickle
 # basis
 from basis import basis, mu_const
 # integration
-from quadrature import unpack_mass_quad, load_mass_quad
+from quadrature import unpack_mass_quad, load_mass_quad, load_quad_order
 # index
 from sparse import ind
+# naming / metadata
+from naming import mass_tag, save_with_meta
 
 # the integrand for the mass matrix
 def integrand(f, phi, point):
@@ -133,12 +133,15 @@ def save_inv_mass():
     # check that these are inverses
     # print(np.dot(m, m_inv))
 
-    # save the mass inverse
-    os.makedirs('./mass', exist_ok=True)
-    with open('./mass/mass_inv.pkl', 'wb') as file:
-        pickle.dump(m_inv, file)
+    # tag + self-describe: the mass matrix depends on n and the MASS quadrature
+    # order (read from the actual mass-quadrature file). Physics-independent, so
+    # no rel/cons/sparse in the meta.
+    n_lag, n_leb = load_quad_order('./quadrature/mass_quadrature.pkl')
+    meta = {'n': n, 'n_lag': n_lag, 'n_leb': n_leb}
+    path = f'./mass/{mass_tag(n, n_lag, n_leb)}.pkl'
+    save_with_meta(path, m_inv, meta)
 
-    print("mass inverse has been saved.")
+    print("mass inverse has been saved at ", path)
  
 # The main function
 def main():

@@ -1,8 +1,6 @@
-import os
-import pickle
 import numpy as np
 from scipy.sparse import csr_matrix
-from naming import operator_tag
+from naming import operator_tag, load_with_meta, save_with_meta
 from quadrature import load_quad_order
 
 # l and m map
@@ -16,23 +14,6 @@ def ind(k, ll, m, n):
     l is between 0 and L
     '''
     return (n*n)*k + lm_index(ll, m)
-
-# loads and returns data
-def load_operator(name):
-    # load
-    with open(name, 'rb') as file:
-        data = pickle.load(file)
-
-    # return
-    return data
-
-# save operator
-def save_sparse_op(name, operator):
-    os.makedirs(os.path.dirname(name), exist_ok=True)
-    with open(name, 'wb') as file:
-        pickle.dump(operator, file)
-
-    print("saved the sparse operator as ", name)
 
 # extracts non-zero entries
 def non_zeros(operator, tol):
@@ -179,14 +160,19 @@ def main():
     tol     = 0.0001    # tolerance for the nonzeros
 
     n_lag, n_leb = load_quad_order()
+    expected  = {'rel': rel, 'cons': cons, 'sparse': sparse,
+                 'n': n, 'n_lag': n_lag, 'n_leb': n_leb}
     tag       = operator_tag(rel, cons, sparse, n, n_lag, n_leb)
     file_name = f'results/{tag}.pkl'
 
     print("analyzing for file with name: ", file_name)
-    op = load_operator(file_name)   # load operator pkl
+    op, meta = load_with_meta(file_name)   # load results pkl + its metadata
+    assert meta == expected, f"results metadata {meta} != requested config {expected}"
+
+    n = meta['n']                   # authoritative n from the artifact (for indexing)
     nz = non_zeros(op, tol)         # extract non zeros
-    analyse(nz)                     # analyse sparsity 
-    
+    analyse(nz)                     # analyse sparsity
+
     si = simple_index(nz, n)        # with simple index
     do = dense_op(si, n)            # dense operator
     so = sparse_op(do)              # sparse operator
@@ -199,9 +185,10 @@ def main():
     for slice in so:
         print(slice.nnz)
  
-    # save it (same tag, sparse_operators/ directory)
+    # save it, propagating the same meta so the output tag matches the input
     sparse_name = f'sparse_operators/{tag}.pkl'
-    save_sparse_op(sparse_name, so)
+    save_with_meta(sparse_name, so, meta)
+    print("saved the sparse operator as ", sparse_name)
 
     return 0
     

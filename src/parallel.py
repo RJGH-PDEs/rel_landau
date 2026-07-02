@@ -1,5 +1,4 @@
 import multiprocessing
-import os
 import time
 import pickle
 import sympy as sp
@@ -8,7 +7,7 @@ import sympy as sp
 from kern import kernel
 from landau import operator_parallel, load_quad
 from sparse_rules import andrea, cai
-from naming import operator_tag
+from naming import operator_tag, save_with_meta
 from quadrature import load_quad_order
 
 # create iterable
@@ -123,6 +122,8 @@ def compute_col_tensor():
     # The quadrature order is read from the actual quadrature file, not the
     # constants, so the name can't misreport the order that was used.
     n_lag, n_leb = load_quad_order()
+    meta      = {'rel': rel, 'cons': cons, 'sparse': sparse,
+                 'n': n, 'n_lag': n_lag, 'n_leb': n_leb}
     tag       = operator_tag(rel, cons, sparse, n, n_lag, n_leb)
     file_name = f'results/{tag}.pkl'
     
@@ -157,11 +158,9 @@ def compute_col_tensor():
     # print the result
     print(result)
 
-    # save the result
-    os.makedirs('results', exist_ok=True)
-    with open(file_name, 'wb') as file:
-        pickle.dump(result, file)
-        print("the result has been saved at ", file_name)
+    # save the result (self-describing: {'meta', 'data'})
+    save_with_meta(file_name, result, meta)
+    print("the result has been saved at ", file_name)
 
 # main function
 if __name__ == "__main__":

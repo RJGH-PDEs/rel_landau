@@ -285,11 +285,13 @@ def save_quadrature():
 def save_mass_quadrature():
     # obtain the mass quadrature
     tensorized = mass_quadrature()
-    
-    # save full quadrature
+
+    # tag with the order used (same rationale as save_quadrature) so the mass
+    # matrix filename can reflect the actual mass-quadrature order.
     os.makedirs('./quadrature', exist_ok=True)
+    payload = {'points': tensorized, 'n_lag': N_LAGUERRE, 'n_leb': N_LEBEDEV}
     with open('./quadrature/mass_quadrature.pkl', 'wb') as file:
-        pickle.dump(tensorized, file)
+        pickle.dump(payload, file)
 
     print("mass quadrature has been saved.")
  
@@ -313,7 +315,8 @@ def load_quad_order(path='./quadrature/quadrature.pkl'):
 def load_mass_quad():
     with open('./quadrature/mass_quadrature.pkl', 'rb') as file:
         data = pickle.load(file)
-    return data
+    # new format: dict {'points', 'n_lag', 'n_leb'}; old format: bare points list
+    return data['points'] if isinstance(data, dict) else data
 
 # this tests the full operator quadrature
 def test(tensorized):
