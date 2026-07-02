@@ -157,13 +157,21 @@ To verify:
 - [x] **Centralized output-file naming convention** — DONE (`src/naming.py` `operator_tag`). Builds
       the filename from run config (rel/cons/sparse/n + quadrature order), e.g.
       `rel_noncons_sparse_n3_q9x7`; each caller prepends its dir.
-- [x] **Quadrature order threaded robustly** — DONE. `quadrature.pkl` stores the `(n_lag,n_leb)` it
-      was built with; `load_quad_order()` reads it back and all three stages name from THAT (not the
-      `N_LAGUERRE`/`N_LEBEDEV` constants), so a stale quadrature file can't mislabel an operator.
-      Old bare-list pickles fall back to the constants. Ready for sweeping degrees.
-      REMAINING CAVEAT: each consumer (`sparse.py`, `time_ev.py`) still sets its own
-      `rel/cons/sparse/n` flags that MUST match the producer's run (the name encodes config, no
-      manifest). A metadata sidecar / embedding config in the pickle could remove that coupling later.
+- [x] **Quadrature order threaded robustly** — DONE. `quadrature.pkl`/`mass_quadrature.pkl` store the
+      `(n_lag,n_leb)` they were built with; `load_quad_order(path)` reads it back and every stage names
+      from THAT, not the constants. Old bare-list pickles fall back to the constants.
+- [x] **Self-describing pipeline (metadata in every artifact)** — DONE. Each artifact is stored as
+      `{'meta', 'data'}` via `naming.save_with_meta`/`load_with_meta`. Operator files carry
+      `{rel,cons,sparse,n,n_lag,n_leb}`; the mass matrix is tagged `mass_inv_n{n}_q{lag}x{leb}` with
+      `{n,n_lag,n_leb}`. Consumers READ `n` from the loaded file (fixes the hardcoded `27` → `n**3`),
+      assert the loaded meta matches the requested config (loud failure on drift), and `sparse.py`
+      propagates meta so its output tag always matches its input. Ready for varying `n` and degrees.
+      REMAINING: consumers still set `rel/cons/sparse/n` flags to LOCATE the input file (name encodes
+      config; no manifest/discovery) — assertions guard mismatches. A discovery/manifest could remove
+      that later.
+- [ ] **`plot/` not yet metadata-aware** — `plot/lc.py` and `plot/plot.py` hardcode `n=3` for
+      reconstruction, and `time_ev` saves `plot/coeff/*.pkl` as bare vectors. For varying-`n` plotting,
+      thread `n` there too (embed `n` in the saved coeff, or have the plotter read it). Follow-up.
 - [ ] Before a full run: choose quadrature degrees (`n_laguerre`, `n_lebedev`) deliberately —
       accuracy vs the 6D cost `(n_lag·n_leb_pts)²` per coefficient. (Runs happen on a cluster.)
 - [x] `sparse` flag added to `compute_col_tensor` (`src/parallel.py`): toggles cai/andrea zero-pruning
