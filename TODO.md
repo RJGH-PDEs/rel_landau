@@ -156,10 +156,14 @@ To verify:
       quadrature orders (`n_laguerre=9`, `n_lebedev=7`), energy choice.
 - [x] **Centralized output-file naming convention** — DONE (`src/naming.py` `operator_tag`). Builds
       the filename from run config (rel/cons/sparse/n + quadrature order), e.g.
-      `rel_noncons_sparse_n3_q9x7`; each caller prepends its dir. Quadrature order is a single source
-      of truth via `quadrature.N_LAGUERRE`/`N_LEBEDEV`. CAVEAT: each consumer (`sparse.py`,
-      `time_ev.py`) sets its own `rel/cons/sparse/n` flags and MUST match the producer's run — the
-      name encodes config, there's no manifest. (A metadata sidecar could remove that coupling later.)
+      `rel_noncons_sparse_n3_q9x7`; each caller prepends its dir.
+- [x] **Quadrature order threaded robustly** — DONE. `quadrature.pkl` stores the `(n_lag,n_leb)` it
+      was built with; `load_quad_order()` reads it back and all three stages name from THAT (not the
+      `N_LAGUERRE`/`N_LEBEDEV` constants), so a stale quadrature file can't mislabel an operator.
+      Old bare-list pickles fall back to the constants. Ready for sweeping degrees.
+      REMAINING CAVEAT: each consumer (`sparse.py`, `time_ev.py`) still sets its own
+      `rel/cons/sparse/n` flags that MUST match the producer's run (the name encodes config, no
+      manifest). A metadata sidecar / embedding config in the pickle could remove that coupling later.
 - [ ] Before a full run: choose quadrature degrees (`n_laguerre`, `n_lebedev`) deliberately —
       accuracy vs the 6D cost `(n_lag·n_leb_pts)²` per coefficient. (Runs happen on a cluster.)
 - [x] `sparse` flag added to `compute_col_tensor` (`src/parallel.py`): toggles cai/andrea zero-pruning
