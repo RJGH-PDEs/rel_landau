@@ -9,6 +9,21 @@ from lc import linear_comb
 from naming import load_with_meta
 
 # ── flags ─────────────────────────────────────────────────────────────────────
+# experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
+# Set this to match ic_mode in time_evol/time_ev.py before running.
+experiment = 'zero_momentum'
+
+_IC_LABELS = {
+    'symmetric':     'coeff[0]=1,  coeff[9]=-0.5',
+    'asymmetric':    'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1',
+    'zero_momentum': 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632',
+}
+_FIG_NAMES_OVERLAY = {
+    'symmetric':     './figures/relaxation_symmetric_overlay.png',
+    'asymmetric':    './figures/relaxation_asymmetric_overlay.png',
+    'zero_momentum': './figures/relaxation_zero_momentum_overlay.png',
+}
+
 # basis truncation (flat dim = N**3)
 N = 3
 # time step size (for physical-time labels in grid/overlay modes)
@@ -26,9 +41,8 @@ hard_coded_coeff = False
 steps      = [0, 100, 300, 1000, 'equil']
 equil_step = 1500    # which saved pkl is treated as the equilibrium snapshot
 
-# overlay mode: optional IC annotation shown in the plot (empty string = no annotation)
-# e.g. 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1'
-ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632'
+# overlay mode: IC annotation and figure name derived from experiment
+ic_label   = _IC_LABELS[experiment]
 # ── end flags ─────────────────────────────────────────────────────────────────
 
 # x-axis evaluation grid (along the x-axis: y=z=0)
@@ -135,7 +149,7 @@ elif mode == 'overlay':
         ax.text(0.02, 0.97, f'IC:  {ic_label}', transform=ax.transAxes,
                 fontsize=8, verticalalignment='top',
                 bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7))
-    fig_name = './figures/relaxation_zero_momentum_overlay.png'
+    fig_name = _FIG_NAMES_OVERLAY[experiment]
     if show: plt.show()
     if save:
         plt.savefig(fig_name, dpi=150)

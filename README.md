@@ -19,16 +19,23 @@ See `CLAUDE.md` for architecture, index conventions, and how to run each stage. 
 mathematical derivation is maintained in the companion write-up repository
 (`relativistic-landau-paper`).
 
-## Plotting (`plot/plot.py`)
+## Plotting
 
-Set the `mode` flag to one of:
-- `'single'` — one snapshot or hard-coded coefficient vector
-- `'grid'`   — multi-panel grid, one panel per iteration index in `steps`
-- `'overlay'`— all snapshots overlaid on one plot (plasma colormap, early→late)
+Two plotting scripts, both run from `plot/` and share the same `experiment` flag
+(`'symmetric'` | `'asymmetric'` | `'zero_momentum'`) that sets the IC label and output
+filename automatically. Set `experiment` to match the `ic_mode` used in `time_evol/time_ev.py`.
 
-Set `steps` (list of iteration indices or `'equil'`) and `tau` (time step) for the
-multi-snapshot modes. Physical time labels are computed as `step × tau`.
-Run from `plot/`: `cd plot && python plot.py`.
+**`plot/plot.py`** — 1D cut along the polar axis:
+- `mode = 'single'` — one snapshot or hard-coded coefficient vector
+- `mode = 'grid'`   — multi-panel grid, one panel per step in `steps`
+- `mode = 'overlay'`— all snapshots overlaid on one axes (plasma colormap, early→late)
+
+**`plot/plot2d.py`** — 2D heatmap on the x-z plane:
+- Evaluates f (with Gaussian weight) on an 80×80 grid; one panel per step in `steps`
+- The x-z plane captures the l=1, m=0 (cos θ) asymmetry as a top-bottom difference in z
+- Colormap is chosen automatically: `plasma` when f ≥ 0, `RdBu_r` when f goes negative
+
+Run from `plot/`: `cd plot && python plot.py` or `cd plot && python plot2d.py`.
 
 ## Experiments
 
@@ -64,8 +71,8 @@ Gaussian shifted along the x-axis. Figure: `relaxation_asymmetric_overlay.png`.
 Same operator and time step; a cos(θ) asymmetry is introduced but net momentum is set to
 zero by adding a second l=1 mode in the cancelling ratio −C₀/C₁ = 0.632456:
 - `coeff[0] = 1`, `coeff[9] = -0.5`
-- `coeff[2] = 0.05` — (k=0, l=1, m=0)
-- `coeff[11] = 0.0316` — (k=1, l=1, m=0), chosen so that ∑ C_k coeff[ind(k,1,0)] = 0
+- `coeff[2] = 0.1` — (k=0, l=1, m=0)
+- `coeff[11] = 0.0632` — (k=1, l=1, m=0), chosen so that ∑ C_k coeff[ind(k,1,0)] = 0
 
 Verified: `(M·f)` at the momentum indices (1,2,3) is machine-zero at t=0.
 

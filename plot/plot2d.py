@@ -8,11 +8,26 @@ from lc import linear_comb
 from naming import load_with_meta
 
 # ── flags ─────────────────────────────────────────────────────────────────────
+# experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
+# Set this to match ic_mode in time_evol/time_ev.py before running.
+experiment = 'zero_momentum'
+
+_IC_LABELS = {
+    'symmetric':     'coeff[0]=1,  coeff[9]=-0.5',
+    'asymmetric':    'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1',
+    'zero_momentum': 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632',
+}
+_FIG_NAMES = {
+    'symmetric':     './figures/relaxation_2d_xz_symmetric.png',
+    'asymmetric':    './figures/relaxation_2d_xz_asymmetric.png',
+    'zero_momentum': './figures/relaxation_2d_xz_zero_momentum.png',
+}
+
 N          = 3
 tau        = 0.0001
 steps      = [0, 100, 300, 1000, 'equil']
 equil_step = 1500
-ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632'
+ic_label   = _IC_LABELS[experiment]
 save       = True
 show       = False
 
@@ -104,7 +119,7 @@ if ic_label:
 fig.suptitle(title, fontsize=11)
 plt.tight_layout()
 
-fig_name = './figures/relaxation_2d_xz.png'
+fig_name = _FIG_NAMES[experiment]
 if show:
     plt.show()
 if save:
