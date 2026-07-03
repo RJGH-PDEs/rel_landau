@@ -15,6 +15,7 @@
 
 # time evolution
 /time_evol/__pycache__/
+/time_evol/conservation/
 
 # plotting
 /plot/coeff/
