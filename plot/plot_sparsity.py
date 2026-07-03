@@ -1,21 +1,24 @@
 import sys
 import os
 import numpy as np
+import numpy.ma as ma
 import matplotlib.pyplot as plt
+import matplotlib.cm as mcm
+import matplotlib.colors as mcolors
 
 sys.path.insert(0, '../src')
 from naming import operator_tag, load_with_meta
 
 # ── config ────────────────────────────────────────────────────────────────────
-rel        = False
-cons       = False
+rel         = False
+cons        = False
 sparse_flag = False
-n          = 3
-n_lag      = 9
-n_leb      = 7
+n           = 3
+n_lag       = 9
+n_leb       = 7
 # ─────────────────────────────────────────────────────────────────────────────
 
-tag    = operator_tag(rel, cons, sparse_flag, n, n_lag, n_leb)
+tag          = operator_tag(rel, cons, sparse_flag, n, n_lag, n_leb)
 tensor, meta = load_with_meta(f'../src/sparse_operators/{tag}.pkl')
 
 # map flat index → (k, l, m) label
@@ -25,26 +28,35 @@ for k in range(n):
         for m in range(-l, l+1):
             labels[n*n*k + l*l + (m+l)] = (k, l, m)
 
-n3         = n**3
-total_nnz  = sum(mat.nnz for mat in tensor)
+n3            = n**3
+total_nnz     = sum(mat.nnz for mat in tensor)
 total_entries = n3 * n3 * n3
+
+# global color scale: symmetric around 0 so diverging map is centred at white
+vmax = max(np.abs(tensor[t].toarray()).max()
+           for t in range(n3) if tensor[t].nnz > 0)
+
+cmap = mcm.RdBu_r.copy()
+cmap.set_bad('white')          # masked zeros → white
 
 os.makedirs('./figures', exist_ok=True)
 
 # 3 rows × 9 cols: row = radial index k, cols = all (l,m) for that k
-ncols = n3 // n        # = 9
-nrows = n              # = 3
+ncols = n3 // n   # = 9
+nrows = n         # = 3
 
-fig, axes = plt.subplots(nrows, ncols, figsize=(13.5, 4.5))
+fig, axes = plt.subplots(nrows, ncols, figsize=(14.5, 4.5),
+                         constrained_layout=True)
 
 for t in range(n3):
     row = t // ncols
     col = t % ncols
     ax  = axes[row, col]
 
-    pattern = (np.abs(tensor[t].toarray()) != 0).astype(float)
+    arr    = tensor[t].toarray()
+    masked = ma.array(arr, mask=(arr == 0))
 
-    ax.imshow(pattern, cmap='binary', vmin=0, vmax=1,
+    ax.imshow(masked, cmap=cmap, vmin=-vmax, vmax=vmax,
               aspect='equal', interpolation='none')
     ax.set_xticks([])
     ax.set_yticks([])
@@ -63,7 +75,11 @@ fig.suptitle(
     f'{total_nnz} / {total_entries} nonzeros  ({100 * total_nnz / total_entries:.1f}%)',
     fontsize=9
 )
-plt.tight_layout()
+
+# shared colorbar on the right
+sm = mcm.ScalarMappable(cmap=cmap, norm=mcolors.Normalize(vmin=-vmax, vmax=vmax))
+sm.set_array([])
+fig.colorbar(sm, ax=axes, fraction=0.015, pad=0.02, label='entry value')
 
 fig_path = f'./figures/sparsity_{tag}.png'
 plt.savefig(fig_path, dpi=150, bbox_inches='tight')
