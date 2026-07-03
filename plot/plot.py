@@ -28,7 +28,7 @@ equil_step = 1500    # which saved pkl is treated as the equilibrium snapshot
 
 # overlay mode: optional IC annotation shown in the plot (empty string = no annotation)
 # e.g. 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1'
-ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.05,  coeff[11]=0.0316'
+ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632'
 # ── end flags ─────────────────────────────────────────────────────────────────
 
 # x-axis evaluation grid (along the x-axis: y=z=0)

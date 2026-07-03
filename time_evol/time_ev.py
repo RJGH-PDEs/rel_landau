@@ -67,7 +67,7 @@ f[9] = -0.5    # (k=1, l=0, m=0)  radial correction → double hump
 if ic_mode == 'asymmetric':
     f[2]  =  0.1                  # (k=0, l=1, m=0)  cos(theta) asymmetry
 if ic_mode == 'zero_momentum':
-    f[2]  =  0.05                 # (k=0, l=1, m=0)  cos(theta) asymmetry
+    f[2]  =  0.1                  # (k=0, l=1, m=0)  cos(theta) asymmetry
     f[11] =  _ZM_RATIO * f[2]    # (k=1, l=1, m=0)  cancels net z-momentum
 
 # save initial condition

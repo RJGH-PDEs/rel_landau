@@ -12,7 +12,7 @@ N          = 3
 tau        = 0.0001
 steps      = [0, 100, 300, 1000, 'equil']
 equil_step = 1500
-ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.05,  coeff[11]=0.0316'
+ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632'
 save       = True
 show       = False
 
