@@ -1,0 +1,70 @@
+import sys
+import os
+import numpy as np
+import matplotlib.pyplot as plt
+
+sys.path.insert(0, '../src')
+from naming import operator_tag, load_with_meta
+
+# ── config ────────────────────────────────────────────────────────────────────
+rel        = False
+cons       = False
+sparse_flag = False
+n          = 3
+n_lag      = 9
+n_leb      = 7
+# ─────────────────────────────────────────────────────────────────────────────
+
+tag    = operator_tag(rel, cons, sparse_flag, n, n_lag, n_leb)
+tensor, meta = load_with_meta(f'../src/sparse_operators/{tag}.pkl')
+
+# map flat index → (k, l, m) label
+labels = {}
+for k in range(n):
+    for l in range(n):
+        for m in range(-l, l+1):
+            labels[n*n*k + l*l + (m+l)] = (k, l, m)
+
+n3         = n**3
+total_nnz  = sum(mat.nnz for mat in tensor)
+total_entries = n3 * n3 * n3
+
+os.makedirs('./figures', exist_ok=True)
+
+# 3 rows × 9 cols: row = radial index k, cols = all (l,m) for that k
+ncols = n3 // n        # = 9
+nrows = n              # = 3
+
+fig, axes = plt.subplots(nrows, ncols, figsize=(13.5, 4.5))
+
+for t in range(n3):
+    row = t // ncols
+    col = t % ncols
+    ax  = axes[row, col]
+
+    pattern = (np.abs(tensor[t].toarray()) != 0).astype(float)
+
+    ax.imshow(pattern, cmap='binary', vmin=0, vmax=1,
+              aspect='equal', interpolation='none')
+    ax.set_xticks([])
+    ax.set_yticks([])
+
+    k, l, m = labels[t]
+    ax.set_title(f'({k},{l},{m})', fontsize=7, pad=2)
+
+    nnz = tensor[t].nnz
+    ax.text(0.97, 0.03, str(nnz),
+            transform=ax.transAxes, fontsize=6,
+            verticalalignment='bottom', horizontalalignment='right',
+            bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7))
+
+fig.suptitle(
+    f'Sparsity pattern — {tag}\n'
+    f'{total_nnz} / {total_entries} nonzeros  ({100 * total_nnz / total_entries:.1f}%)',
+    fontsize=9
+)
+plt.tight_layout()
+
+fig_path = f'./figures/sparsity_{tag}.png'
+plt.savefig(fig_path, dpi=150, bbox_inches='tight')
+print(f'saved {fig_path}')
