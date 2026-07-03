@@ -32,9 +32,9 @@ NUM_ITERATIONS = 10000
 
 # run config -- used to LOCATE the sparse-operator file (via operator_tag). The
 # authoritative n / config come from the loaded artifact's metadata, not here.
-rel    = True
+rel    = False
 cons   = False
-sparse = True
+sparse = False
 n      = 3
 # read the actual quadrature order from the operator quadrature file in ../src
 n_lag, n_leb = load_quad_order('../src/quadrature/quadrature.pkl')
@@ -52,8 +52,7 @@ assert mass_meta['n'] == n, f"mass matrix n={mass_meta['n']} != operator n={n}"
 # initial condition (state vector has size n**3)
 f = np.zeros(n**3)
 f[0] = 1
-f[1] = 0.1
-f[9] = -0.6
+f[9] = -0.5
 
 # save initial condition
 save_coeff(0, f)
@@ -75,9 +74,11 @@ for i in range(1, NUM_ITERATIONS):
     # update
     update(f, f_next)
 
-    # save it every few steps
-    if i%100 == 0 and save:
-        save_coeff(i, f)
+    # print norm and save every few steps
+    if i%100 == 0:
+        print(f"step {i:5d} / {NUM_ITERATIONS}  ||f|| = {np.linalg.norm(f):.6f}")
+        if save:
+            save_coeff(i, f)
 
 '''
 check status of final 

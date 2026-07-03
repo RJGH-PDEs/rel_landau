@@ -173,6 +173,10 @@ To verify:
       `plot.py` has a single `N = 3` constant (not hardcoded `27`), passes `n=N` through, and reads
       `n` from artifact metadata when loading pkl files (falls back to `N` for bare vectors). REMAINING:
       `time_ev` still saves bare coeff vectors; threading `n` into those files would remove the fallback.
+- [x] **Non-relativistic experiment DONE (2026-07-02).** Operator `nonrel_noncons_dense_n3_q9x7`
+      run on TACC; sparse.py validated; time evolution run locally with IC `coeff[0]=1,
+      coeff[9]=-0.5` (double-hump), Δt=0.0001, 10k steps. Converged to equilibrium by t≈0.15.
+      Plots (grid + overlay) in `plot/figures/`. Next: relativistic run with same quadrature.
 - [ ] Before a full run: choose quadrature degrees (`n_laguerre`, `n_lebedev`) deliberately —
       accuracy vs the 6D cost `(n_lag·n_leb_pts)²` per coefficient. (Runs happen on a cluster.)
 - [x] `sparse` flag added to `compute_col_tensor` (`src/parallel.py`): toggles cai/andrea zero-pruning
