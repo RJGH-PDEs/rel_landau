@@ -49,10 +49,26 @@ m_lag, m_leb = load_quad_order('../src/quadrature/mass_quadrature.pkl')
 mi, mass_meta = load_with_meta(f'../src/mass/{mass_tag(n, m_lag, m_leb)}.pkl')
 assert mass_meta['n'] == n, f"mass matrix n={mass_meta['n']} != operator n={n}"
 
-# initial condition (state vector has size n**3)
+# initial condition: 'symmetric' | 'asymmetric' | 'zero_momentum'
+#   symmetric     -- double hump, radially symmetric (no l>0 modes)
+#   asymmetric    -- same double hump + cos(theta) perturbation (non-zero net momentum)
+#   zero_momentum -- asymmetric but net momentum = 0 in all directions;
+#                    coeff[11] chosen so C0*coeff[2] + C1*coeff[11] = 0
+#                    where C_k = mu(k,1) * integral L_k^{3/2}(r^2) r^4 e^{-r^2/2} dr
+#                    ratio -C0/C1 = 0.632456  (basis-dependent, verified numerically)
+ic_mode = 'zero_momentum'
+
+# ratio -C0/C1 that zeroes the discrete z-momentum
+_ZM_RATIO = 0.632456
+
 f = np.zeros(n**3)
-f[0] = 1
-f[9] = -0.5
+f[0] =  1.0    # (k=0, l=0, m=0)  Gaussian
+f[9] = -0.5    # (k=1, l=0, m=0)  radial correction → double hump
+if ic_mode == 'asymmetric':
+    f[2]  =  0.1                  # (k=0, l=1, m=0)  cos(theta) asymmetry
+if ic_mode == 'zero_momentum':
+    f[2]  =  0.05                 # (k=0, l=1, m=0)  cos(theta) asymmetry
+    f[11] =  _ZM_RATIO * f[2]    # (k=1, l=1, m=0)  cancels net z-momentum
 
 # save initial condition
 save_coeff(0, f)

@@ -23,8 +23,12 @@ time             = 1000
 hard_coded_coeff = False
 
 # grid / overlay mode: list of iteration indices (int) or 'equil'
-steps      = [0, 100, 200, 300, 1000, 'equil']
+steps      = [0, 100, 300, 1000, 'equil']
 equil_step = 1500    # which saved pkl is treated as the equilibrium snapshot
+
+# overlay mode: optional IC annotation shown in the plot (empty string = no annotation)
+# e.g. 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1'
+ic_label   = 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.05,  coeff[11]=0.0316'
 # ── end flags ─────────────────────────────────────────────────────────────────
 
 # x-axis evaluation grid (along the x-axis: y=z=0)
@@ -124,10 +128,14 @@ elif mode == 'overlay':
 
     ax.axhline(0, color='gray', linewidth=0.7, linestyle='--')
     ax.set_xlabel('x')
-    ax.legend(fontsize=8, loc='upper right')
+    ax.legend(fontsize=9, loc='upper right')
     ax.grid(True, alpha=0.4)
     ax.set_title(f'Non-relativistic relaxation  ($\\Delta t = {tau}$)')
-    fig_name = './figures/relaxation_overlay.png'
+    if ic_label:
+        ax.text(0.02, 0.97, f'IC:  {ic_label}', transform=ax.transAxes,
+                fontsize=8, verticalalignment='top',
+                bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.7))
+    fig_name = './figures/relaxation_zero_momentum_overlay.png'
     if show: plt.show()
     if save:
         plt.savefig(fig_name, dpi=150)

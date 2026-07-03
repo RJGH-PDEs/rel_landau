@@ -47,3 +47,28 @@ Run from `plot/`: `cd plot && python plot.py`.
 Final state has only three non-negligible coefficients (indices 0, 9, 18 — all l=0),
 and `‖Q(f,f)‖ ≤ 10⁻¹²` at the end. Coefficient snapshots saved every 100 steps
 in `plot/coeff/`; figures in `plot/figures/`.
+
+### Non-relativistic relaxation — asymmetric IC (2026-07-02)
+
+Same operator and time step as above, with a cos(θ) perturbation that creates a non-zero
+net z-momentum:
+- `coeff[0] = 1`, `coeff[9] = -0.5` (double-hump base)
+- `coeff[2] = 0.1` — (k=0, l=1, m=0) cos(θ) mode, net momentum ≠ 0
+
+**Result:** the l=0 modes relax as before, but the l=1 mode stabilises at a non-zero value
+because the scheme conserves the net z-momentum exactly. The final state is an asymmetric
+Gaussian shifted along the x-axis. Figure: `relaxation_asymmetric_overlay.png`.
+
+### Non-relativistic relaxation — zero-momentum asymmetric IC (2026-07-02)
+
+Same operator and time step; a cos(θ) asymmetry is introduced but net momentum is set to
+zero by adding a second l=1 mode in the cancelling ratio −C₀/C₁ = 0.632456:
+- `coeff[0] = 1`, `coeff[9] = -0.5`
+- `coeff[2] = 0.05` — (k=0, l=1, m=0)
+- `coeff[11] = 0.0316` — (k=1, l=1, m=0), chosen so that ∑ C_k coeff[ind(k,1,0)] = 0
+
+Verified: `(M·f)` at the momentum indices (1,2,3) is machine-zero at t=0.
+
+**Result:** with no conserved momentum to maintain the asymmetry, the l=1 modes decay to
+machine-zero and the system relaxes to the same isotropic Gaussian equilibrium as the
+symmetric case (same final ‖f‖ ≈ 1.2161). Figure: `relaxation_zero_momentum_overlay.png`.
