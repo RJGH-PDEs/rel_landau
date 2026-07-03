@@ -1,0 +1,163 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{amsmath, amsthm, amssymb}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem*{remark}{Remark}
+
+\title{Discrete Preservation of Radial and Azimuthal Symmetry\\[4pt]
+       \large A note on the Petrov--Galerkin Landau discretization}
+\author{}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section*{Setup and notation}
+
+We work with the Petrov--Galerkin discretization of the Landau collision
+operator described in the main text (Sec.~3--5).  Trial (basis) and test
+functions are indexed by triples $(k,l,m)$ with $k \geq 0$,
+$0 \leq l \leq n-1$, $|m| \leq l$:
+\[
+  \psi_{k,l,m}(p)
+    = \mu_{k,l}\, L_k^{l+1/2}(r^2)\, r^l\, Y_{lm}(\hat p)\, e^{-r^2/2},
+  \qquad
+  \phi_{k,l,m}(p)
+    = L_k^{l+1/2}(r^2)\, r^l\, Y_{lm}(\hat p),
+\]
+where $r = |p|$, $\hat p = p/r$, $\mu_{k,l}$ is the normalisation constant
+(Eq.~(43)), and $Y_{lm}$ are real spherical harmonics (Eqs.~(28)--(30)).
+We write $i = (k_i, l_i, m_i)$ for a multi-index and use the same letter for
+the corresponding flat index when the context is clear.
+
+The coefficient vector $\mathbf{f} \in \mathbb{R}^N$ ($N = n^3$) evolves by
+the forward-Euler scheme
+\begin{equation}\label{eq:scheme}
+  \mathbf{f}^{n+1} = \mathbf{f}^n
+    + \tau\, M^{-1}\, Q(\mathbf{f}^n, \mathbf{f}^n),
+\end{equation}
+where $M_{ij} = \langle \phi_i, \psi_j \rangle$ is the mass matrix (Eq.~(14))
+and
+\begin{equation}\label{eq:Q}
+  [Q(\mathbf{f}, \mathbf{f})]_i
+    = \sum_{s,\, t} f_s\, f_t\; \mathcal{Q}_{i,s,t}
+\end{equation}
+with $\mathcal{Q}_{i,s,t}$ the collision tensor (Eq.~(15); index order:
+$i$ = test function, $s = f(p)$, $t = \nabla g(q)$).
+
+Two sparsity rules from Sec.~7 identify when tensor entries vanish
+\emph{identically}:
+
+\begin{itemize}
+  \item \textbf{Anisotropic rule} (Sec.~7.3, ``andrea''):
+    $\mathcal{Q}_{i,s,t} = 0$ unless $l_s + l_t - l_i$ is a non-negative
+    even integer satisfying $l_s + l_t - l_i \leq 2\min(l_s, l_t)$.
+    Equivalently, $l_i$ must appear in the Clebsch--Gordan decomposition of
+    $l_s \otimes l_t$, i.e.\ $|l_s - l_t| \leq l_i \leq l_s + l_t$ with
+    $l_s + l_t - l_i$ even.
+
+  \item \textbf{Directional rule} (Sec.~7.2, ``cai''):
+    $\mathcal{Q}_{i,s,t} = 0$ unless $|m_i| = |m_s + m_t|$ or
+    $|m_i| = |m_s - m_t|$.
+\end{itemize}
+
+\noindent We also record one structural fact about the mass matrix.
+
+\begin{proposition}[Block structure of $M$]\label{prop:block}
+$M_{ij} = 0$ whenever $(l_i, m_i) \neq (l_j, m_j)$.  In particular $M$,
+and therefore $M^{-1}$, are block-diagonal with blocks indexed by $(l, m)$.
+\end{proposition}
+
+\begin{proof}
+$M_{ij} = \langle \phi_i, \psi_j \rangle$ factorises into a radial integral
+times the angular integral $\int_{S^2} Y_{l_i m_i}(\hat p)\, Y_{l_j m_j}(\hat p)
+\,d\hat p = \delta_{l_i l_j}\,\delta_{m_i m_j}$, which vanishes unless
+$(l_i, m_i) = (l_j, m_j)$.
+\end{proof}
+
+\section*{Main results}
+
+\begin{theorem}[Discrete preservation of radial symmetry]\label{thm:radial}
+If $f^0_{k,l,m} = 0$ for every $l > 0$, then $f^n_{k,l,m} = 0$ for every
+$l > 0$ and every time step $n \geq 0$.
+\end{theorem}
+
+\begin{proof}
+By induction it suffices to show: if $f_{k,l,m} = 0$ for all $l > 0$ then
+$[\mathbf{f}^{n+1} - \mathbf{f}^n]_i = \tau[M^{-1} Q(\mathbf{f},\mathbf{f})]_i
+= 0$ for every $i$ with $l_i > 0$.
+
+\textit{Step 1: $[Q(\mathbf{f},\mathbf{f})]_i = 0$ for $l_i > 0$.}
+By hypothesis $f_s = 0$ unless $l_s = 0$, and similarly $f_t = 0$ unless
+$l_t = 0$, so the only potentially non-zero terms in~\eqref{eq:Q} have
+$l_s = l_t = 0$.  For any such pair and any $i$ with $l_i > 0$, the
+anisotropic rule requires
+\[
+  0 \;\leq\; \underbrace{l_s + l_t}_{=\,0} - l_i \;=\; -l_i,
+\]
+which fails for $l_i > 0$.  Hence $\mathcal{Q}_{i,s,t} = 0$ for every
+$(s,t)$ with $l_s = l_t = 0$ and every $i$ with $l_i > 0$, and therefore
+$[Q(\mathbf{f},\mathbf{f})]_i = 0$.
+
+\textit{Step 2: $[M^{-1} Q(\mathbf{f},\mathbf{f})]_i = 0$ for $l_i > 0$.}
+By Step~1, $Q(\mathbf{f},\mathbf{f})$ has non-zero entries only at $l = 0$
+indices.  By Proposition~\ref{prop:block}, $M^{-1}$ is block-diagonal in
+$(l,m)$, so row $i$ of $M^{-1}$ is supported on the $(l_i, m_i)$-block.
+For $l_i > 0$ that block of $Q(\mathbf{f},\mathbf{f})$ is zero, giving
+$[M^{-1} Q(\mathbf{f},\mathbf{f})]_i = 0$.
+\end{proof}
+
+\begin{remark}
+The zeros in Step~1 are \emph{structural}: each tensor entry
+$\mathcal{Q}_{i,s,t}$ with $l_s = l_t = 0$ and $l_i > 0$ vanishes
+identically, not by cancellation among non-zero summands.  In exact
+arithmetic the symmetry is exact; in floating-point arithmetic it is
+preserved to machine precision.
+\end{remark}
+
+\begin{corollary}[Discrete preservation of azimuthal symmetry]\label{cor:azimuthal}
+If $f^0_{k,l,m} = 0$ for every $m \neq 0$, then $f^n_{k,l,m} = 0$ for
+every $m \neq 0$ and every $n \geq 0$.
+\end{corollary}
+
+\begin{proof}
+The only potentially non-zero terms in~\eqref{eq:Q} have $m_s = m_t = 0$.
+The directional rule then requires $|m_i| = |0 \pm 0| = 0$, so
+$\mathcal{Q}_{i,s,t} = 0$ for every $|m_i| > 0$.  The block-diagonal
+structure of $M^{-1}$ (in $m$) completes the argument.
+\end{proof}
+
+\begin{remark}[Physical interpretation and generality]
+Both results are discrete manifestations of the rotational equivariance of
+the Landau kernel.  The tensor $\mathbb{S}(u)$ (Eq.~(10)) satisfies
+$\mathbb{S}(Ru) = R\,\mathbb{S}(u)\,R^\top$ for every $R \in \mathrm{SO}(3)$,
+so the weak form commutes with simultaneous rotation of $p$ and $q$.  The
+Wigner--Eckart theorem then forces the angular coupling to respect the
+Clebsch--Gordan rules, which is precisely the anisotropic selection rule.
+For $l_s = l_t = 0$ the Clebsch--Gordan product $0 \otimes 0$ contains only
+$l = 0$, closing off all $l > 0$ channels.
+
+Consequently, Theorem~\ref{thm:radial} and Corollary~\ref{cor:azimuthal}
+hold for \emph{any} Petrov--Galerkin scheme in the spherical-harmonic--Laguerre
+basis applied to any rotation-equivariant bilinear collision operator, not
+just the Landau operator with the simplified kernel $\Phi_{\mathrm{simple}}$.
+The only requirements are the Clebsch--Gordan selection rule on the collision
+tensor and the block-diagonal structure of the mass matrix, both of which
+follow from the rotational symmetry of the basis and the kernel.
+\end{remark}
+
+\begin{remark}[Invariant subspaces]
+More generally, any set $\mathcal{S}$ of values of $l$ that is
+\emph{closed under the triangle rule} --- meaning $l_s, l_t \in \mathcal{S}$
+implies every $l$ with $|l_s - l_t| \leq l \leq l_s + l_t$ and
+$l_s + l_t - l$ even lies in $\mathcal{S}$ --- defines an invariant subspace
+of the discrete dynamics.  The set $\{0\}$ (radial symmetry) and the set
+$\{0, 1, 2, \ldots\}$ with $m = 0$ only (azimuthal symmetry) are both closed
+in this sense.
+\end{remark}
+
+\end{document}
