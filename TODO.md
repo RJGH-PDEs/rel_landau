@@ -46,7 +46,55 @@ full-accuracy run, use the normal pipeline on a cluster (`parallel.py` → `spar
 
 ---
 
-## Track A — Math ↔ code verification (against `main.tex`)
+## Conserved-quantities tracking (planned, not yet done)
+
+**Goal:** produce time-series plots of the discretely conserved quantities — mass, momentum, and
+(optionally) energy — for each time-evolution experiment, as a sanity check that the scheme
+actually conserves what it claims to conserve.
+
+**Key insight:** In the Petrov-Galerkin scheme the conserved quantities live in M·f, not in f
+itself (because the mass matrix is the "inner product" between test and trial spaces).  For a
+conserved test function φ_i, we have Q(f,f)[i] = 0 exactly, so M·f_{n+1}[i] = M·f_n[i] at
+every step.  The relevant entries of M·f are:
+
+| Quantity   | Test function              | Flat index (n=3)        |
+|------------|----------------------------|-------------------------|
+| Mass       | (k=0, l=0, m=0)            | `ind(0,0,0)` = **0**   |
+| Momentum z | (k=0, l=1, m=0)            | `ind(0,1,0)` = **2**   |
+| Momentum x | (k=0, l=1, m=1)            | `ind(0,1,1)` = **3**   |
+| Momentum y | (k=0, l=1, m=-1)           | `ind(0,1,-1)` = **1**  |
+
+Energy is *not* a single flat index — it corresponds to the test function r²/2, which is a linear
+combination of l=0 basis functions (specifically k=0 and k=1, since L_1^{1/2}(r²) = 3/2 − r²).
+Energy tracking therefore needs an explicit projection vector; deferred for now.
+
+**Implementation plan (no changes to time_ev.py needed):**
+
+1. **Compute M from M⁻¹**: the mass matrix is not currently saved separately — only M⁻¹ is.
+   Recover it as `M = np.linalg.inv(mi)` (cheap, 27×27).  Alternatively, update `mass_matrix.py`
+   to also save `M` under `mass_tag(...)` (cleaner long term).
+
+2. **New script: `plot/plot_conservation.py`**
+   - Load M⁻¹ → invert → M.
+   - Load each saved coeff pkl (steps [0, 100, 200, ..., N]) from `plot/coeff/`.
+   - For each step: compute `q = M @ f`, extract `q[0]`, `q[1]`, `q[2]`, `q[3]`.
+   - Plot: 4 subplots (one per conserved quantity) of value vs physical time t = step × τ.
+     - Expected: perfectly flat lines (machine precision drift at most).
+   - Use the same `experiment` flag as `plot.py` / `plot2d.py`.
+
+3. **What to look for in each experiment:**
+   - `symmetric`: q[0] constant, q[1]=q[2]=q[3]=0 (no net momentum, should stay 0).
+   - `asymmetric`: q[0] constant, q[2] ≠ 0 and constant (non-zero z-momentum conserved),
+     q[1]=q[3]=0.
+   - `zero_momentum`: q[0] constant, q[1]=q[2]=q[3]=0 all the way (zero momentum, stays 0).
+
+4. **Optional — energy:**
+   Build the energy projection vector `e_vec` once (offline):
+   `e_vec[i] = ∫ (r²/2) · φ_test(r) · ψ_i(r) e^{-r²/2} dr dΩ`
+   — i.e., a row of a "generalised mass matrix" with test fn φ_energy = r²/2 instead of the usual
+   Petrov-Galerkin test.  Then `E(t) = e_vec @ f(t)`.  For the Gaussian-weight basis this integral
+   is analytic (Laguerre × power × Gaussian), so no extra quadrature needed.
+
 
 Already confirmed during planning:
 - [x] `cai` directional sparsity (`src/sparse_rules.py:40-45`) matches Sec. 7.2: `|m_i| = |m_s ± m_t|`.
