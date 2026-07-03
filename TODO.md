@@ -77,7 +77,7 @@ Already confirmed during planning:
 
 To verify:
 - [x] **`mu_const` — CODE IS CORRECT; write-up Eq. (43) has a factor-of-2 typo.** Code
-      `√(2·k!/Γ(k+l+3/2))` makes the trial functions L²-orthonormal (`⟨ψ_a,ψ_b⟩=δ`, verified
+      `√(2·k!/Γ(k+l+3/2))` makes the trial functions L²-orthonormal (`⟨ψ_s,ψ_t⟩=δ`, verified
       numerically: diag=1.000000, off-diag ~1e-16), matching the write-up's OWN derivation
       (product-of-weights `e^{-r²}` → the `x=r²` Jacobian `½` → Laguerre orthogonality). The printed
       Eq. (43) `√(k!/(2Γ))` gives 0.25 instead of 1. **Action: fix Eq. (43) in the paper repo
