@@ -33,8 +33,10 @@ total_nnz     = sum(mat.nnz for mat in tensor)
 total_entries = n3 * n3 * n3
 
 # global color scale: symmetric around 0 so diverging map is centred at white
-vmax = max(np.abs(tensor[t].toarray()).max()
-           for t in range(n3) if tensor[t].nnz > 0)
+all_nonzero = np.concatenate([tensor[t].data for t in range(n3) if tensor[t].nnz > 0])
+vmax      = np.abs(all_nonzero).max()
+linthresh = np.abs(all_nonzero).min()   # linear window as tight as the data allows
+norm = mcolors.SymLogNorm(linthresh=linthresh, vmin=-vmax, vmax=vmax, base=10)
 
 cmap = mcm.RdBu_r.copy()
 cmap.set_bad('white')          # masked zeros → white
@@ -56,7 +58,7 @@ for t in range(n3):
     arr    = tensor[t].toarray()
     masked = ma.array(arr, mask=(arr == 0))
 
-    ax.imshow(masked, cmap=cmap, vmin=-vmax, vmax=vmax,
+    ax.imshow(masked, cmap=cmap, norm=norm,
               aspect='equal', interpolation='none')
     ax.set_xticks([])
     ax.set_yticks([])
@@ -77,7 +79,7 @@ fig.suptitle(
 )
 
 # shared colorbar on the right
-sm = mcm.ScalarMappable(cmap=cmap, norm=mcolors.Normalize(vmin=-vmax, vmax=vmax))
+sm = mcm.ScalarMappable(cmap=cmap, norm=norm)
 sm.set_array([])
 fig.colorbar(sm, ax=axes, fraction=0.015, pad=0.02, label='entry value')
 
