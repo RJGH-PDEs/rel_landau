@@ -32,21 +32,13 @@ energy = data[:, 6]
 
 fig, axes = plt.subplots(3, 1, figsize=(9, 8), sharex=True)
 
-# Mass and energy have large absolute values but tiny variation, so plot
-# deviation from the initial value to keep the y-axis readable.
-# Momentum is already naturally small and is shown in absolute terms.
-dmass   = mass   - mass[0]
-denergy = energy - energy[0]
-
-# ── mass drift ────────────────────────────────────────────────────────────────
-axes[0].plot(t, dmass, color='steelblue', linewidth=1.5)
-axes[0].axhline(0, color='gray', linewidth=0.7, linestyle='--')
-axes[0].set_ylabel('$\\Delta$ mass  $(M\\mathbf{f})_0 - (M\\mathbf{f})_0^{t=0}$')
+# ── mass ──────────────────────────────────────────────────────────────────────
+axes[0].plot(t, mass, color='steelblue', linewidth=1.5)
+axes[0].set_ylabel('mass  $(M\\mathbf{f})_0$')
 axes[0].grid(True, alpha=0.4)
-axes[0].text(0.01, 0.97, f'initial value: {mass[0]:.6g}',
-             transform=axes[0].transAxes, fontsize=8, va='top', color='gray')
+axes[0].ticklabel_format(useOffset=False)
 
-# ── momentum (absolute) ───────────────────────────────────────────────────────
+# ── momentum ──────────────────────────────────────────────────────────────────
 axes[1].plot(t, px, color='tomato',    linewidth=1.5, label='$P_x$')
 axes[1].plot(t, py, color='goldenrod', linewidth=1.5, label='$P_y$')
 axes[1].plot(t, pz, color='seagreen',  linewidth=1.5, label='$P_z$')
@@ -54,15 +46,14 @@ axes[1].axhline(0, color='gray', linewidth=0.7, linestyle='--')
 axes[1].set_ylabel('momentum  $(M\\mathbf{f})_{1,2,3}$')
 axes[1].legend(fontsize=9, loc='right')
 axes[1].grid(True, alpha=0.4)
+axes[1].ticklabel_format(useOffset=False)
 
-# ── energy drift ──────────────────────────────────────────────────────────────
-axes[2].plot(t, denergy, color='mediumpurple', linewidth=1.5)
-axes[2].axhline(0, color='gray', linewidth=0.7, linestyle='--')
-axes[2].set_ylabel('$\\Delta$ energy proxy  $(M\\mathbf{f})_9 - (M\\mathbf{f})_9^{t=0}$')
+# ── energy ────────────────────────────────────────────────────────────────────
+axes[2].plot(t, energy, color='mediumpurple', linewidth=1.5)
+axes[2].set_ylabel('energy proxy  $(M\\mathbf{f})_9$')
 axes[2].set_xlabel('physical time  $t$')
 axes[2].grid(True, alpha=0.4)
-axes[2].text(0.01, 0.97, f'initial value: {energy[0]:.6g}',
-             transform=axes[2].transAxes, fontsize=8, va='top', color='gray')
+axes[2].ticklabel_format(useOffset=False)
 
 ic = _IC_LABELS.get(experiment, experiment)
 fig.suptitle(
