@@ -147,9 +147,9 @@ To verify:
 - [ ] No tests, no `requirements.txt`, no package structure.
 
 ### Medium
-- [ ] Consolidate duplicated functions: `mu_const`/`spher_const` (`src/basis.py` ↔
-      `plot/test_func.py`), `ind`/`lm_index` (`src/sparse.py` ↔ `plot/lc.py`),
-      `radius`/`theta`/`phi` (`src/quadrature.py` ↔ `plot/plot.py`).
+- [x] Consolidate duplicated functions: `mu_const`/`spher_const` now imported from `src/basis`;
+      `ind` now imported from `src/sparse` (`lm_index` removed from `plot/`);
+      `radius`/`theta`/`phi` (`src/quadrature.py` ↔ `plot/plot.py`) — deferred.
 - [ ] Rename the misnamed `test()` in `plot/test_func.py` (it's the unweighted trial with μ, not the
       test function φ). Touches `plot/lc.py`. Deferred (semantic rename).
 - [ ] Centralize hard-coded params: `n=3`, magic `27`, `tau`, `NUM_ITERATIONS`, `tol`,
@@ -169,9 +169,10 @@ To verify:
       REMAINING: consumers still set `rel/cons/sparse/n` flags to LOCATE the input file (name encodes
       config; no manifest/discovery) — assertions guard mismatches. A discovery/manifest could remove
       that later.
-- [ ] **`plot/` not yet metadata-aware** — `plot/lc.py` and `plot/plot.py` hardcode `n=3` for
-      reconstruction, and `time_ev` saves `plot/coeff/*.pkl` as bare vectors. For varying-`n` plotting,
-      thread `n` there too (embed `n` in the saved coeff, or have the plotter read it). Follow-up.
+- [x] **`plot/` metadata-aware for `n`** — `linear_comb` now accepts `n` as a parameter (default 3);
+      `plot.py` has a single `N = 3` constant (not hardcoded `27`), passes `n=N` through, and reads
+      `n` from artifact metadata when loading pkl files (falls back to `N` for bare vectors). REMAINING:
+      `time_ev` still saves bare coeff vectors; threading `n` into those files would remove the fallback.
 - [ ] Before a full run: choose quadrature degrees (`n_laguerre`, `n_lebedev`) deliberately —
       accuracy vs the 6D cost `(n_lag·n_leb_pts)²` per coefficient. (Runs happen on a cluster.)
 - [x] `sparse` flag added to `compute_col_tensor` (`src/parallel.py`): toggles cai/andrea zero-pruning

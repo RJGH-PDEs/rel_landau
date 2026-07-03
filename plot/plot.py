@@ -1,12 +1,18 @@
+import sys
+sys.path.insert(0, '../src')
+
 import matplotlib.pyplot as plt
 import numpy as np
 from lc import linear_comb
+from naming import load_with_meta
 import pickle
 
 '''
 flags
 '''
-# time 
+# basis truncation: flat dimension = N**3
+N = 3
+# time
 time = 1000
 # flag to save the figure
 save = True
@@ -71,22 +77,22 @@ print(p)
 # will store the function
 f = np.zeros(n)
 
-if hard_coded_coeff: 
-    # coefficients
-    coeff = np.zeros(27)
+if hard_coded_coeff:
+    n_basis = N
+    coeff = np.zeros(n_basis**3)
     coeff[0] = 1
     coeff[1] = 0
     coeff[9] = 0
     plt_name = "hard-coded coefficients"
-else: 
+else:
     file_name = "coeff/" + str(time) + ".pkl"
-    with open(file_name, 'rb') as file:
-        coeff = pickle.load(file)
-    plt_name = 'Solution at after ' + str(time) + ' iterations' 
+    coeff, meta = load_with_meta(file_name)
+    n_basis = meta['n'] if meta is not None else N
+    plt_name = 'Solution at after ' + str(time) + ' iterations'
 
 # counter
 for i in range(n):
-    func_val = linear_comb(coeff, r[i], t[i], p[i])
+    func_val = linear_comb(coeff, r[i], t[i], p[i], n=n_basis)
     f[i] = np.exp((-r[i]**2)/2)*func_val
 
 # Create the plot

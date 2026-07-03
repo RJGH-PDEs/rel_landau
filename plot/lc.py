@@ -1,30 +1,15 @@
-# import numpy as np
+import sys
+sys.path.insert(0, '../src')
+
 from test_func import test
+from sparse import ind
 
-# l and m map
-def lm_index(ll, m): 
-    return ll*ll + (m + ll)
-
-# k, l, m map
-def ind(k, ll, m, n):
-    '''
-    here, we use the convention that
-    l is between 0 and L
-    '''
-    return (n*n)*k + lm_index(ll, m)
-
-def linear_comb(coefficients, r, t, p):
-    # max k, l, m
-    n = 3
-
-    # partial result
+def linear_comb(coefficients, r, t, p, n=3):
     result = 0
 
-
-    for k in range(0,n):
+    for k in range(0, n):
         for l in range(0, n):
             for m in range(-l, l+1):
-                # print([k, l, m], ind(k, l, m, n))
                 result = result + coefficients[ind(k, l, m, n)]*test(k, l, m, r, t, p)
 
     return result

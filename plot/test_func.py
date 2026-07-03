@@ -1,41 +1,14 @@
 # Import
+import sys
+sys.path.insert(0, '../src')
+
 import numpy as np
 import sympy as sp
 
 from scipy.special import genlaguerre
 from scipy.special import lpmv
-from scipy.special import factorial
-from scipy.special import gamma
 
-# the mu_kl constant that makes the basis functions be an orthonormal system (see p. 348 of paper)
-def mu_const(k, l):
-    '''
-    Goes in front of only the basis functions, not the test functions
-    '''
-    # compute the constant    
-    result = 2 * factorial(k)
-    result = result/gamma(k + l + 3/2)
-    result = np.sqrt(result)
-    
-    # return result
-    return result 
-
-# The constant for the spherical harmonic
-def spher_const(l,m):
-    """
-    The constant that goes in front of the Legendre polynomial to produce a spherical harmonic.
-    """
-    result = 0
-
-    result = (2*l+1)/(2*np.pi)
-    if m == 0:
-        return np.sqrt(result/2)
-
-    result = result*factorial(l-np.abs(m))
-    # print(factorial(l-np.abs(m)))
-    result = result/factorial(l+np.abs(m))
-    # print(factorial(l+np.abs(m)))
-    return np.sqrt(result)
+from basis import mu_const, spher_const
 
 
 # Phi(r): the radial part of the test functions
