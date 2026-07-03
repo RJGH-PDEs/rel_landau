@@ -77,6 +77,8 @@ fig.suptitle(
     f'{total_nnz} / {total_entries} nonzeros  ({100 * total_nnz / total_entries:.1f}%)',
     fontsize=9
 )
+fig.supxlabel(r'$\psi_t$', fontsize=9)
+fig.supylabel(r'$\psi_s$', fontsize=9)
 
 # shared colorbar on the right
 sm = mcm.ScalarMappable(cmap=cmap, norm=norm)
