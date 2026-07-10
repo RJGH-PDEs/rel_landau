@@ -192,7 +192,10 @@ t = 0, 0.25, 0.50, ~1.0.
 quadrature (9×7), mass matrix, bilinear collision-tensor assembly, time stepping, and
 reconstruction — all against a known closed-form solution. The code passes.
 
-Figure saved at `plot/figures/lemou_benchmark.png`.
+Figures saved:
+- `plot/figures/lemou_benchmark.png` — two-panel: log-scale decay + radial profiles
+- `plot/figures/lemou_compare.png`  — side-by-side analytical vs numerical profiles
+- `plot/figures/lemou_coeffs.png`   — coefficient evolution: c[0] flat, c[9]/c[18] → 0
 
 ---
 
