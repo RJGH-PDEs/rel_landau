@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as mcm
 import matplotlib.colors as mcolors
 
-sys.path.insert(0, '../src')
+sys.path.insert(0, '../../src')
 from naming import operator_tag, load_with_meta
 
 # ── config ────────────────────────────────────────────────────────────────────
@@ -19,7 +19,7 @@ n_leb       = 7
 # ─────────────────────────────────────────────────────────────────────────────
 
 tag          = operator_tag(rel, cons, sparse_flag, n, n_lag, n_leb)
-tensor, meta = load_with_meta(f'../src/sparse_operators/{tag}.pkl')
+tensor, meta = load_with_meta(f'../../src/sparse_operators/{tag}.pkl')
 
 # map flat index → (k, l, m) label
 labels = {}
@@ -72,13 +72,11 @@ for t in range(n3):
             verticalalignment='bottom', horizontalalignment='right',
             bbox=dict(boxstyle='round,pad=0.2', facecolor='white', alpha=0.7))
 
-fig.suptitle(
-    f'Sparsity pattern — {tag}\n'
-    f'{total_nnz} / {total_entries} nonzeros  ({100 * total_nnz / total_entries:.1f}%)',
-    fontsize=9
-)
-fig.supxlabel(r'$\psi_t$', fontsize=9)
-fig.supylabel(r'$\psi_s$', fontsize=9)
+fig.supxlabel(r'$\psi_r$', fontsize=10)
+fig.supylabel(r'$\psi_s$', fontsize=10)
+
+print(f'tag:          {tag}')
+print(f'nonzeros:     {total_nnz} / {total_entries}  ({100 * total_nnz / total_entries:.2f}%)')
 
 # shared colorbar on the right
 sm = mcm.ScalarMappable(cmap=cmap, norm=norm)
