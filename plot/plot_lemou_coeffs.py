@@ -45,9 +45,9 @@ for spine in ax.spines.values():
     spine.set_color(AXIS)
     spine.set_linewidth(0.8)
 
-ax.semilogy(times, c0s,  color=C0_COL,  lw=2, label=r'$c_0$  (k=0, equilibrium)')
-ax.semilogy(times, c9s,  color=C9_COL,  lw=2, label=r'$c_9$  (k=1, decays $e^{-8t}$)')
-ax.semilogy(times, c18s, color=C18_COL, lw=2, label=r'$c_{18}$ (k=2, decays $e^{-8t}$)')
+ax.semilogy(times, c0s,  color=C0_COL,  lw=2, label=r'$\alpha_{0,0,0}$  (equilibrium)')
+ax.semilogy(times, c9s,  color=C9_COL,  lw=2, label=r'$\alpha_{1,0,0}$  (decays $e^{-8t}$)')
+ax.semilogy(times, c18s, color=C18_COL, lw=2, label=r'$\alpha_{2,0,0}$ (decays $e^{-8t}$)')
 
 ax.set_xlabel('t', color=INK2, fontsize=11)
 ax.set_ylabel('coefficient magnitude', color=INK2, fontsize=11)

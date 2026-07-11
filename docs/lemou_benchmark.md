@@ -93,6 +93,99 @@ the coefficient vector converges to the pure k=0, l=0, m=0 component.
 
 ---
 
+## Basis and Coefficient Conventions
+
+This section documents the full chain from the physical distribution function f(v) down to
+the numbers stored in the coefficient array, so the benchmark can be read independently of
+the code.
+
+### Reconstruction formula
+
+The physical distribution function is expanded directly in the trial basis:
+
+```
+f(v) = Σ_{k,l,m} α_{k,l,m} · ψ_{k,l,m}(v)
+```
+
+where the **trial basis functions** are (consistent with the LaTeX write-up, eq. trial-basis):
+
+```
+ψ_{k,l,m}(v) = μ_{k,l} · r^l · e^{−r²/2} · L_k^{l+1/2}(r²) · Y_l^m(θ, φ)
+```
+
+with r = |v|, L_k^α the generalized Laguerre polynomial, Y_l^m a real spherical harmonic,
+and μ_{k,l} = √(2 k! / Γ(k + l + 3/2)) a normalization constant. The Gaussian weight
+e^{−r²/2} is part of the trial basis function.
+
+**Code note:** In the implementation (`plot/lc.py`, `plot/test_func.py`), the Gaussian is
+applied separately — `test_func` returns μ_{k,l} · L_k^{l+1/2}(r²) · Y_l^m (no Gaussian),
+and `linear_comb` multiplies the whole sum by e^{−r²/2} afterward. This is a code
+convenience; the two representations are equivalent.
+
+### Flat index
+
+For an n=3 basis (k = 0,1,2 and l = 0,…,n−1), the flat index of (k, l, m) is:
+
+```
+ind(k, l, m) = n² k + l² + (m + l)
+```
+
+For the isotropic modes (l = 0, m = 0): ind(0,0,0) = 0, ind(1,0,0) = 9, ind(2,0,0) = 18.
+
+### Isotropic case (l = 0, m = 0)
+
+For radially symmetric f (only l = 0, m = 0 modes active), r^l = 1 and Y_0^0 = 1/√(4π),
+so the trial functions reduce to ψ_{k,0,0}(v) = μ_{k,0} · e^{−r²/2} · L_k^{1/2}(r²) · Y₀⁰,
+and the reconstruction becomes:
+
+```
+f(v) = e^{−r²/2} · Y₀⁰ · Σ_k α_{k,0,0} · μ_{k,0} · L_k^{1/2}(r²)
+```
+
+(the Gaussian and Y₀⁰ factor out of the sum since they are independent of k).
+Numerical values of μ_{k,0}:
+
+| k | μ_{k,0} = √(2 k! / Γ(k + 3/2)) |
+|---|----------------------------------|
+| 0 | ≈ 1.5023  (= √(4/√π))           |
+| 1 | ≈ 1.2266  (= √(8/(3√π)))         |
+| 2 | ≈ 1.0970  (= √(16/(15√π)))       |
+
+### Deriving the Lemou IC coefficients
+
+Matching f₀(v) = M(v)(1 + p(r²)) to the expansion (with M(v) = e^{−r²/2}/(2π)^{3/2}):
+
+```
+[1/(2π)^{3/2}] · (1 + p(r²)) = [1/√(4π)] · Σ_k α_{k,0,0} · μ_{k,0} · L_k^{1/2}(r²)
+```
+
+Rearranging (the prefactor (2π)^{3/2}/√(4π) = π√2):
+
+```
+1 + p(r²) = π√2 · Σ_k α_{k,0,0} · μ_{k,0} · L_k^{1/2}(r²)
+```
+
+Using the Laguerre decomposition 1 + p(x) = (33/32)L₀ + (1/24)L₁ + (1/60)L₂:
+
+```
+α_{k,0,0} = LAG_k / (π√2 · μ_{k,0})
+```
+
+where LAG_0 = 33/32, LAG_1 = 1/24, LAG_2 = 1/60.
+
+### Numerical values
+
+| Flat index | (k,l,m) | LAG_k  | μ_{k,0} | α_{k,0,0}  |
+|------------|---------|--------|---------|------------|
+| 0          | (0,0,0) | 33/32  | 1.5023  | 0.154506   |
+| 9          | (1,0,0) | 1/24   | 1.2266  | 0.007646   |
+| 18         | (2,0,0) | 1/60   | 1.0970  | 0.003419   |
+
+All other 24 coefficients (l > 0 or k > 2) are exactly zero by symmetry.
+Reconstruction error against the exact f₀ on a dense radial grid: ≤ 10⁻¹⁶ (machine precision).
+
+---
+
 ## Implementation Plan
 
 ### Step 1 — Compute the Lemou IC coefficient vector

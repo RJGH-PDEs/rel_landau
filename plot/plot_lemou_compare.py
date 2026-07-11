@@ -94,12 +94,12 @@ for ax, profiles, title in [
 
     ax.set_xlim(0, 5.5)
     ax.set_ylim(y_min, y_max)
-    ax.set_xlabel('r  = |v|', color=INK2, fontsize=10)
+    ax.set_xlabel(r'$r_p = |p|$', color=INK2, fontsize=10)
     ax.grid(True, color=GRID, lw=0.6, ls='--', zorder=0)
     ax.tick_params(colors=INK2, labelsize=8)
     ax.set_title(title, color=INK, fontsize=12, fontweight='bold', pad=10)
 
-ax_l.set_ylabel('f (r)', color=INK2, fontsize=10)
+ax_l.set_ylabel(r'$f(r_p)$', color=INK2, fontsize=10)
 ax_r.tick_params(labelleft=False)
 
 # single shared legend below both panels

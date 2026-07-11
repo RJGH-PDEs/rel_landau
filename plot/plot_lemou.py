@@ -112,14 +112,14 @@ for ax in (ax_left, ax_right):
 
 # ── left panel: coefficient decay ─────────────────────────────────────────────
 # numerical
-ax_left.semilogy(times, np.abs(c9s),  color=C1, lw=2,   label=r'$c_9(t)$  (num.)',  zorder=3)
-ax_left.semilogy(times, np.abs(c18s), color=C2, lw=2,   label=r'$c_{18}(t)$ (num.)', zorder=3)
+ax_left.semilogy(times, np.abs(c9s),  color=C1, lw=2,   label=r'$\alpha_{1,0,0}(t)$  (num.)',  zorder=3)
+ax_left.semilogy(times, np.abs(c18s), color=C2, lw=2,   label=r'$\alpha_{2,0,0}(t)$ (num.)', zorder=3)
 
 # analytical overlay
 ax_left.semilogy(t_fine, c9_0  * np.exp(-8 * t_fine), color=C1, lw=1.2,
-                 ls='--', label=r'$c_9(0)\,e^{-8t}$ (anal.)',   zorder=2)
+                 ls='--', label=r'$\alpha_{1,0,0}(0)\,e^{-8t}$ (anal.)',   zorder=2)
 ax_left.semilogy(t_fine, c18_0 * np.exp(-8 * t_fine), color=C2, lw=1.2,
-                 ls='--', label=r'$c_{18}(0)\,e^{-8t}$ (anal.)', zorder=2)
+                 ls='--', label=r'$\alpha_{2,0,0}(0)\,e^{-8t}$ (anal.)', zorder=2)
 
 ax_left.set_xlabel('t', color=INK2, fontsize=10)
 ax_left.set_ylabel('coefficient magnitude', color=INK2, fontsize=10)
@@ -168,8 +168,8 @@ ax_right.legend(handles=handles + extra,
                 fontsize=8, framealpha=0.85, edgecolor=AXIS,
                 labelcolor=INK2, facecolor=SURFACE, ncol=1)
 
-ax_right.set_xlabel('r  = |v|', color=INK2, fontsize=10)
-ax_right.set_ylabel('f (r)', color=INK2, fontsize=10)
+ax_right.set_xlabel(r'$r_p = |p|$', color=INK2, fontsize=10)
+ax_right.set_ylabel(r'$f(r_p)$', color=INK2, fontsize=10)
 ax_right.set_title('Radial profile vs analytical solution', color=INK,
                    fontsize=11, fontweight='bold', pad=10)
 ax_right.tick_params(colors=INK2, labelsize=8)
