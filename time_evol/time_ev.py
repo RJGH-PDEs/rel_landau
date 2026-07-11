@@ -59,7 +59,7 @@ assert mass_meta['n'] == n, f"mass matrix n={mass_meta['n']} != operator n={n}"
 #   lemou         -- Villani/Lemou exact benchmark (Maxwellian molecules, isotropic);
 #                    f0 = M(v)*(1 + r^4/120 - r^2/12 + 1/8), exact analytical solution
 #                    h(t,v) = M(v)*(1 + e^{-8t}*(r^4/120 - r^2/12 + 1/8))
-ic_mode = 'symmetric'
+ic_mode = 'zero_momentum'
 
 # ratio -C0/C1 that zeroes the discrete z-momentum
 _ZM_RATIO = 0.632456

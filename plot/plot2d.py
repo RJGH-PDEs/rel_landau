@@ -113,10 +113,6 @@ for ax in axes_flat[len(steps):]:
     ax.set_visible(False)
 
 fig.colorbar(im, ax=axes_flat[len(steps) - 1], shrink=0.8, label=r'$f$')
-title = f'Non-relativistic relaxation — x-z plane  ($\\Delta t = {tau}$)'
-if ic_label:
-    title += f'\nIC:  {ic_label}'
-fig.suptitle(title, fontsize=11)
 plt.tight_layout()
 
 fig_name = _FIG_NAMES[experiment]

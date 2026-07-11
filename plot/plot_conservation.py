@@ -8,7 +8,7 @@ import os
 # ── flags ─────────────────────────────────────────────────────────────────────
 # experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
 # Must match the CSV produced by time_evol/conservation_check.py.
-experiment = 'asymmetric'
+experiment = 'zero_momentum'
 
 _IC_LABELS = {
     'symmetric':     r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$',
