@@ -11,12 +11,12 @@ from naming import load_with_meta
 # ── flags ─────────────────────────────────────────────────────────────────────
 # experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
 # Set this to match ic_mode in time_evol/time_ev.py before running.
-experiment = 'zero_momentum'
+experiment = 'symmetric'
 
 _IC_LABELS = {
-    'symmetric':     'coeff[0]=1,  coeff[9]=-0.5',
-    'asymmetric':    'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1',
-    'zero_momentum': 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632',
+    'symmetric':     r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$',
+    'asymmetric':    r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$, $\alpha_{0,1,0}=0.1$',
+    'zero_momentum': r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$, $\alpha_{0,1,0}=0.1$, $\alpha_{1,1,0}\approx 0.0632$',
 }
 _FIG_NAMES_OVERLAY = {
     'symmetric':     './figures/relaxation_symmetric_overlay.png',
@@ -96,7 +96,8 @@ if mode == 'single':
     plt.plot(x, f, marker='o', markersize=3)
     plt.axhline(0, color='gray', linewidth=0.7, linestyle='--')
     plt.title(plt_name)
-    plt.xlabel('x')
+    plt.xlabel(r'$p_x$')
+    plt.ylabel(r'$f(p)$')
     plt.grid(True, alpha=0.4)
     if show: plt.show()
     if save:
@@ -141,7 +142,8 @@ elif mode == 'overlay':
         ax.plot(x, f, color=color, label=step_label(step))
 
     ax.axhline(0, color='gray', linewidth=0.7, linestyle='--')
-    ax.set_xlabel('x')
+    ax.set_xlabel(r'$p_x$')
+    ax.set_ylabel(r'$f(p)$')
     ax.legend(fontsize=9, loc='upper right')
     ax.grid(True, alpha=0.4)
     ax.set_title(f'Non-relativistic relaxation  ($\\Delta t = {tau}$)')

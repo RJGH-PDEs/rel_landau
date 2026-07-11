@@ -10,12 +10,12 @@ from naming import load_with_meta
 # ── flags ─────────────────────────────────────────────────────────────────────
 # experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
 # Set this to match ic_mode in time_evol/time_ev.py before running.
-experiment = 'zero_momentum'
+experiment = 'symmetric'
 
 _IC_LABELS = {
-    'symmetric':     'coeff[0]=1,  coeff[9]=-0.5',
-    'asymmetric':    'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1',
-    'zero_momentum': 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632',
+    'symmetric':     r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$',
+    'asymmetric':    r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$, $\alpha_{0,1,0}=0.1$',
+    'zero_momentum': r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$, $\alpha_{0,1,0}=0.1$, $\alpha_{1,1,0}\approx 0.0632$',
 }
 _FIG_NAMES = {
     'symmetric':     './figures/relaxation_2d_xz_symmetric.png',
@@ -104,15 +104,15 @@ for ax, F, label in zip(axes_flat, panels, labels):
     im = ax.pcolormesh(xv, zv, F, cmap=cmap, vmin=vmin, vmax=vmax, shading='auto')
     ax.set_aspect('equal')
     ax.set_title(label, fontsize=10)
-    ax.set_xlabel('x')
-    ax.set_ylabel('z')
+    ax.set_xlabel(r'$p_x$')
+    ax.set_ylabel(r'$p_z$')
     ax.axhline(0, color='white', linewidth=0.5, linestyle='--', alpha=0.4)
     ax.axvline(0, color='white', linewidth=0.5, linestyle='--', alpha=0.4)
 
 for ax in axes_flat[len(steps):]:
     ax.set_visible(False)
 
-fig.colorbar(im, ax=axes_flat[len(steps) - 1], shrink=0.8, label='f(x, 0, z)')
+fig.colorbar(im, ax=axes_flat[len(steps) - 1], shrink=0.8, label=r'$f$')
 title = f'Non-relativistic relaxation — x-z plane  ($\\Delta t = {tau}$)'
 if ic_label:
     title += f'\nIC:  {ic_label}'

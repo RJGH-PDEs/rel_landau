@@ -8,12 +8,12 @@ import os
 # ── flags ─────────────────────────────────────────────────────────────────────
 # experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
 # Must match the CSV produced by time_evol/conservation_check.py.
-experiment = 'zero_momentum'
+experiment = 'symmetric'
 
 _IC_LABELS = {
-    'symmetric':     'coeff[0]=1,  coeff[9]=-0.5',
-    'asymmetric':    'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1',
-    'zero_momentum': 'coeff[0]=1,  coeff[9]=-0.5,  coeff[2]=0.1,  coeff[11]=0.0632',
+    'symmetric':     r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$',
+    'asymmetric':    r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$, $\alpha_{0,1,0}=0.1$',
+    'zero_momentum': r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$, $\alpha_{0,1,0}=0.1$, $\alpha_{1,1,0}\approx 0.0632$',
 }
 
 save = True
@@ -34,7 +34,7 @@ fig, axes = plt.subplots(3, 1, figsize=(9, 8), sharex=True)
 
 # ── mass ──────────────────────────────────────────────────────────────────────
 axes[0].plot(t, mass, color='steelblue', linewidth=1.5)
-axes[0].set_ylabel('mass  $(M\\mathbf{f})_0$')
+axes[0].set_ylabel('mass  $(M\\vec{f})_0$')
 axes[0].grid(True, alpha=0.4)
 axes[0].ticklabel_format(useOffset=False)
 
@@ -43,14 +43,14 @@ axes[1].plot(t, px, color='tomato',    linewidth=1.5, label='$P_x$')
 axes[1].plot(t, py, color='goldenrod', linewidth=1.5, label='$P_y$')
 axes[1].plot(t, pz, color='seagreen',  linewidth=1.5, label='$P_z$')
 axes[1].axhline(0, color='gray', linewidth=0.7, linestyle='--')
-axes[1].set_ylabel('momentum  $(M\\mathbf{f})_{1,2,3}$')
+axes[1].set_ylabel('momentum  $(M\\vec{f})_{1,2,3}$')
 axes[1].legend(fontsize=9, loc='right')
 axes[1].grid(True, alpha=0.4)
 axes[1].ticklabel_format(useOffset=False)
 
 # ── energy ────────────────────────────────────────────────────────────────────
 axes[2].plot(t, energy, color='mediumpurple', linewidth=1.5)
-axes[2].set_ylabel('energy proxy  $(M\\mathbf{f})_9$')
+axes[2].set_ylabel('energy proxy  $(M\\vec{f})_9$')
 axes[2].set_xlabel('physical time  $t$')
 axes[2].grid(True, alpha=0.4)
 axes[2].ticklabel_format(useOffset=False)

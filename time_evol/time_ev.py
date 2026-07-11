@@ -4,7 +4,6 @@ import numpy as np
 import pickle
 from bilinear import landau
 from bilinear import update
-from lemou_ic import lemou_coefficients
 # reach the shared naming helper + quadrature-order constants in ../src
 sys.path.insert(0, '../src')
 from naming import operator_tag, mass_tag, load_with_meta
@@ -60,12 +59,14 @@ assert mass_meta['n'] == n, f"mass matrix n={mass_meta['n']} != operator n={n}"
 #   lemou         -- Villani/Lemou exact benchmark (Maxwellian molecules, isotropic);
 #                    f0 = M(v)*(1 + r^4/120 - r^2/12 + 1/8), exact analytical solution
 #                    h(t,v) = M(v)*(1 + e^{-8t}*(r^4/120 - r^2/12 + 1/8))
-ic_mode = 'lemou'
+ic_mode = 'symmetric'
 
 # ratio -C0/C1 that zeroes the discrete z-momentum
 _ZM_RATIO = 0.632456
 
 if ic_mode == 'lemou':
+    sys.path.insert(0, '../experiments/lemou_benchmark')
+    from lemou_ic import lemou_coefficients
     f = lemou_coefficients(n)
 else:
     f = np.zeros(n**3)
