@@ -146,7 +146,6 @@ elif mode == 'overlay':
     ax.set_ylabel(r'$f(p)$')
     ax.legend(fontsize=9, loc='upper right')
     ax.grid(True, alpha=0.4)
-    ax.set_title(f'Non-relativistic relaxation  ($\\Delta t = {tau}$)')
     if ic_label:
         ax.text(0.02, 0.97, f'IC:  {ic_label}', transform=ax.transAxes,
                 fontsize=8, verticalalignment='top',
