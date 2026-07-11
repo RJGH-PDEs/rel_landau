@@ -70,6 +70,33 @@ The energy function defines the model and is selected by the `rel` / `cons` flag
 
 `n` (degrees of freedom) and the output `file_name` are also hard-coded here. The kernel (`kern.py`) takes the energy gradient and builds the Landau projection operator from it.
 
+## Experiments
+
+Experiment-specific code, figures, and documentation live under `experiments/`, one subdirectory per experiment. General pipeline code (`src/`, `time_evol/`, `plot/`) stays in place.
+
+```
+experiments/
+├── lemou_benchmark/        — Maxwellian-molecules exact analytical validation (Villani/Lemou)
+│   ├── lemou_benchmark.md  — full documentation of the benchmark (moved from docs/)
+│   ├── lemou_ic.py         — IC coefficient computation (moved from time_evol/)
+│   ├── plot_lemou.py       — log-scale decay + radial profiles
+│   ├── plot_lemou_coeffs.py — coefficient evolution α_{k,0,0}(t)
+│   ├── plot_lemou_compare.py — analytical vs numerical side-by-side
+│   ├── plot_lemou_villani_time.py — same data in Villani's rescaled time t̃=2t
+│   └── figures/            — lemou_benchmark.png, lemou_coeffs.png, lemou_compare.png, lemou_villani_time.png
+├── relaxation_symmetric/   — double-hump IC (coeff[0]=1, coeff[9]=-0.5), isotropic relaxation
+│   └── figures/            — relaxation_overlay.png, relaxation_2d_xz*.png, conservation_symmetric.png, ic_candidates.png
+├── relaxation_asymmetric/  — cos(θ) perturbation (coeff[2]=0.1), nonzero net z-momentum conserved
+│   └── figures/            — relaxation_2d_xz_asymmetric.png, conservation_asymmetric.png, ic_asymmetric.png
+├── relaxation_zero_momentum/ — cos(θ) perturbation, zero net momentum (cancelling l=1 modes)
+│   └── figures/            — relaxation_zero_momentum_overlay.png, conservation_zero_momentum.png, ic_zero_momentum.png
+└── sparsity/               — collision tensor sparsity visualization
+    ├── plot_sparsity.py    — (moved from plot/)
+    └── figures/            — sparsity_nonrel_noncons_dense_n3_q9x7.png
+```
+
+**⚠️ Stale relative paths in moved scripts:** All scripts under `experiments/` were moved from `plot/` or `time_evol/` and still carry their original relative paths (e.g. `sys.path.insert(0, '../src')`, `COEFF_DIR = './coeff'`). These will need updating when the scripts are next run — fix paths to point to the repo root, e.g. `../../src` and `../../plot/coeff` respectively.
+
 ## Gotchas
 
 - **Path mismatches exist between stages.** e.g. `mass_matrix.py` saves to `./mass/mass_inv.pkl`, while `time_ev.py` loads `../src/mass/mass.pkl`; `parallel.py` writes to `results/` while `sparse.py` reads a specific named file. Verify the actual filenames when wiring stages together — do not assume they already line up.
