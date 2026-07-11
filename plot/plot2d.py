@@ -10,7 +10,7 @@ from naming import load_with_meta
 # ── flags ─────────────────────────────────────────────────────────────────────
 # experiment: 'symmetric' | 'asymmetric' | 'zero_momentum'
 # Set this to match ic_mode in time_evol/time_ev.py before running.
-experiment = 'symmetric'
+experiment = 'asymmetric'
 
 _IC_LABELS = {
     'symmetric':     r'$\alpha_{0,0,0}=1$, $\alpha_{1,0,0}=-1/2$',

@@ -45,7 +45,7 @@ equil_step = 1500    # which saved pkl is treated as the equilibrium snapshot
 ic_label   = _IC_LABELS[experiment]
 # ── end flags ─────────────────────────────────────────────────────────────────
 
-# x-axis evaluation grid (along the x-axis: y=z=0)
+# evaluation grid along the z-axis (theta=0 → z-direction; x here is the plot axis parameter)
 N_PTS = 200
 x    = np.linspace(-5, 5, N_PTS)
 r    = np.abs(x)
@@ -96,7 +96,7 @@ if mode == 'single':
     plt.plot(x, f, marker='o', markersize=3)
     plt.axhline(0, color='gray', linewidth=0.7, linestyle='--')
     plt.title(plt_name)
-    plt.xlabel(r'$p_x$')
+    plt.xlabel(r'$p_z$')
     plt.ylabel(r'$f(p)$')
     plt.grid(True, alpha=0.4)
     if show: plt.show()
@@ -142,7 +142,7 @@ elif mode == 'overlay':
         ax.plot(x, f, color=color, label=step_label(step))
 
     ax.axhline(0, color='gray', linewidth=0.7, linestyle='--')
-    ax.set_xlabel(r'$p_x$')
+    ax.set_xlabel(r'$p_z$')
     ax.set_ylabel(r'$f(p)$')
     ax.legend(fontsize=9, loc='upper right')
     ax.grid(True, alpha=0.4)
